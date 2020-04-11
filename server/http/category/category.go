@@ -2,7 +2,7 @@ package category
 
 import (
 	"encoding/json"
-	"github/kaduartur/jams-manager/server"
+	"github.com/BorsaTeam/jams-manager/server"
 	"net/http"
 	"strings"
 )
@@ -20,7 +20,7 @@ func Handle() http.HandlerFunc {
 		case http.MethodPost:
 			processPost(w, r)
 		case http.MethodDelete:
-			processDelete(w,r)
+			processDelete(r)
 		default:
 			http.NotFound(w, r)
 		}

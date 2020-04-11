@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github/kaduartur/jams-manager/server/http/category"
+	"github.com/BorsaTeam/jams-manager/server/http/category"
 	"log"
 	"net/http"
 )
