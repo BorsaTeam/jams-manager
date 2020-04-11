@@ -24,7 +24,6 @@ func Handle() http.HandlerFunc {
 		default:
 			http.NotFound(w, r)
 		}
-
 	}
 }
 
@@ -50,10 +49,9 @@ func processGet(w http.ResponseWriter) {
 
 func serviceFromPath(path string) string {
 	return strings.Replace(path, "/categories/", "", 1)
-
 }
 
-func processDelete(w http.ResponseWriter, r *http.Request) {
+func processDelete(r *http.Request) {
 	id := serviceFromPath(r.URL.Path)
 
 	for i := range categories {
@@ -61,7 +59,6 @@ func processDelete(w http.ResponseWriter, r *http.Request) {
 			categories = append(categories[:i], categories[i+1:]...)
 			break
 		}
-
 	}
 }
 
