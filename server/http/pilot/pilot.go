@@ -32,7 +32,6 @@ func (m Manager) Handle() http.HandlerFunc {
 		default:
 			http.Error(w, "Invalid request method", 405)
 		}
-
 	}
 }
 
@@ -51,7 +50,6 @@ func processGet(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(findAll())
-
 }
 
 func findOne(id string) server.Pilot {
@@ -104,7 +102,6 @@ func id(path string) string {
 	if len(p) > 1 {
 		return p[2]
 	}
-
 	return ""
 }
 
@@ -117,5 +114,4 @@ func processDelete(r *http.Request) {
 			break
 		}
 	}
-
 }
