@@ -10,7 +10,6 @@ import (
 func main() {
 	pilotHandler := pilot.NewHandler()
 
-
 	http.Handle("/categories", category.Handle())
 	http.Handle("/categories/", category.Handle())
 

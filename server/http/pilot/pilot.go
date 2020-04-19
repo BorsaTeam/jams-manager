@@ -2,7 +2,6 @@ package pilot
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/BorsaTeam/jams-manager/server"
 	"net/http"
 	"strings"
@@ -17,8 +16,7 @@ func NewHandler() Manager {
 	return Manager{}
 }
 
-func (m Manager) Handle() http.HandlerFunc  {
-
+func (m Manager) Handle() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -31,6 +29,8 @@ func (m Manager) Handle() http.HandlerFunc  {
 			processDelete(r)
 		case http.MethodPut:
 			processPut(w, r)
+		default:
+			http.Error(w, "Invalid request method", 405)
 		}
 
 	}
@@ -38,36 +38,34 @@ func (m Manager) Handle() http.HandlerFunc  {
 
 func processGet(w http.ResponseWriter, r *http.Request) {
 	if id := id(r.URL.Path); id != "" {
-		findOne(w, r)
+		pilot := findOne(id)
+		if pilot.Id == "" {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(pilot)
 		return
 	}
 
-	findAll(w)
-
-}
-
-func findAll(w http.ResponseWriter) {
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(pilots)
+	json.NewEncoder(w).Encode(findAll())
+
 }
 
-func findOne(w http.ResponseWriter, r *http.Request) {
-	id := id(r.URL.Path)
-	var pilot *server.Pilot
+func findOne(id string) server.Pilot {
 
 	for i := range pilots {
 		if pilots[i].Id == id {
-			pilot = &pilots[i]
-			break
+			return pilots[i]
 		}
 	}
-	if pilot == nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	return server.Pilot{}
+}
 
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(pilot)
+func findAll() server.Pilots {
+	return pilots
 }
 
 func processPost(w http.ResponseWriter, r *http.Request) {
@@ -94,7 +92,6 @@ func processPut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := id(r.URL.Path)
-	fmt.Print()
 	for i := range pilots {
 		if pilots[i].Id == id {
 			pilots[i] = pilot
@@ -103,9 +100,11 @@ func processPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func id(path string) string {
-	if id := strings.Replace(path, "/pilots/", "", 1); id != "/pilots" {
-		return id
+	p := strings.Split(path, "/")
+	if len(p) > 1 {
+		return p[2]
 	}
+
 	return ""
 }
 
