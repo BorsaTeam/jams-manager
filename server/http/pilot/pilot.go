@@ -30,7 +30,7 @@ func (m Manager) Handle() http.HandlerFunc {
 		case http.MethodPut:
 			processPut(w, r)
 		default:
-			http.Error(w, "Invalid request method", 405)
+			http.Error(w,http.StatusText(http.StatusNotImplemented),http.StatusNotImplemented)
 		}
 	}
 }
