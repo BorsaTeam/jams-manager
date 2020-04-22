@@ -1,5 +1,7 @@
 package server
 
+import "net/http"
+
 type (
 	Category struct {
 		Id   string `json:"id"`
@@ -8,3 +10,6 @@ type (
 	Categories []Category
 )
 
+type CategoryHandler interface {
+	Handle() http.HandlerFunc
+}
