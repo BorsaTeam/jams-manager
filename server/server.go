@@ -23,6 +23,10 @@ type (
 	Pilots []Pilot
 )
 
+type CategoryHandler interface {
+	Handle() http.HandlerFunc
+}
+
 type PilotHandler interface {
 	Handle() http.HandlerFunc
 }

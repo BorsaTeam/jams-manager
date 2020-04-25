@@ -2,62 +2,71 @@ package category
 
 import (
 	"encoding/json"
-	"github.com/BorsaTeam/jams-manager/server"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
+
+	"github.com/BorsaTeam/jams-manager/server"
 )
 
 var categories = server.Categories{}
 
-func Handle() http.HandlerFunc {
+type Manager struct {
+}
 
+func NewCategoryHandler() Manager {
+	return Manager{}
+}
+
+func (m Manager) Handle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		switch r.Method {
-
 		case http.MethodGet:
-			processGet(w)
+			processFindAll(w)
 		case http.MethodPost:
 			processPost(w, r)
 		case http.MethodDelete:
 			processDelete(r)
 		default:
-			http.NotFound(w, r)
+			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	}
 }
 
 func processPost(w http.ResponseWriter, r *http.Request) {
-
-	category := server.Category{}
+	uid, _ := uuid.NewRandom()
+	category := server.Category{Id: uid.String()}
 
 	defer r.Body.Close()
 
 	err := json.NewDecoder(r.Body).Decode(&category)
 	if err != nil {
-		w.Write([]byte("Error while processing data"))
+		http.Error(w, "Error while processing data", http.StatusBadRequest)
 	}
 
 	categories = append(categories, category)
 }
 
-func processGet(w http.ResponseWriter) {
-
+func processFindAll(w http.ResponseWriter) {
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(categories)
 }
 
-func serviceFromPath(path string) string {
-	return strings.Replace(path, "/categories/", "", 1)
-}
-
 func processDelete(r *http.Request) {
-	id := serviceFromPath(r.URL.Path)
-
+	id := id(r.URL.Path)
 	for i := range categories {
 		if categories[i].Id == id {
 			categories = append(categories[:i], categories[i+1:]...)
 			break
 		}
 	}
+}
+
+func id(path string) string {
+	ss := strings.Split(path, "/")
+	if len(ss) == 3 {
+		return ss[2]
+	}
+	return ""
 }
