@@ -9,7 +9,7 @@ type (
 	}
 	Categories []Category
 
-	Pilot struct {
+	Rider struct {
 		Id               string   `json:"id"`
 		Name             string   `json:"name"`
 		Age              int      `json:"age"`
@@ -20,13 +20,13 @@ type (
 		Sponsors         []string `json:"sponsors"`
 		CategoryId       string   `json:"categoryId"`
 	}
-	Pilots []Pilot
+	Riders []Rider
 )
 
 type CategoryHandler interface {
 	Handle() http.HandlerFunc
 }
 
-type PilotHandler interface {
+type RiderHandler interface {
 	Handle() http.HandlerFunc
 }
