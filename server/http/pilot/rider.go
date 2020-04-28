@@ -1,13 +1,14 @@
-package pilot
+package rider
 
 import (
 	"encoding/json"
-	"github.com/BorsaTeam/jams-manager/server"
 	"net/http"
 	"strings"
+
+	"github.com/BorsaTeam/jams-manager/server"
 )
 
-var pilots = server.Pilots{}
+var riders = server.Riders{}
 
 type Manager struct {
 }
@@ -37,14 +38,14 @@ func (m Manager) Handle() http.HandlerFunc {
 
 func processGet(w http.ResponseWriter, r *http.Request) {
 	if id := id(r.URL.Path); id != "" {
-		pilot := findOne(id)
-		if pilot.Id == "" {
+		rider := findOne(id)
+		if rider.Id == "" {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 
 		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(pilot)
+		json.NewEncoder(w).Encode(rider)
 		return
 	}
 
@@ -52,47 +53,47 @@ func processGet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(findAll())
 }
 
-func findOne(id string) server.Pilot {
+func findOne(id string) server.Rider {
 
-	for i := range pilots {
-		if pilots[i].Id == id {
-			return pilots[i]
+	for i := range riders {
+		if riders[i].Id == id {
+			return riders[i]
 		}
 	}
-	return server.Pilot{}
+	return server.Rider{}
 }
 
-func findAll() server.Pilots {
-	return pilots
+func findAll() server.Riders {
+	return riders
 }
 
 func processPost(w http.ResponseWriter, r *http.Request) {
-	pilot := server.Pilot{}
+	rider := server.Rider{}
 
 	defer r.Body.Close()
 
-	err := json.NewDecoder(r.Body).Decode(&pilot)
+	err := json.NewDecoder(r.Body).Decode(&rider)
 	if err != nil {
 		w.Write([]byte("Error while processing data"))
 	}
 
-	pilots = append(pilots, pilot)
+	riders = append(riders, rider)
 }
 
 func processPut(w http.ResponseWriter, r *http.Request) {
-	pilot := server.Pilot{}
+	rider := server.Rider{}
 
 	defer r.Body.Close()
 
-	err := json.NewDecoder(r.Body).Decode(&pilot)
+	err := json.NewDecoder(r.Body).Decode(&rider)
 	if err != nil {
 		w.Write([]byte("Error while processing data"))
 	}
 
 	id := id(r.URL.Path)
-	for i := range pilots {
-		if pilots[i].Id == id {
-			pilots[i] = pilot
+	for i := range riders {
+		if riders[i].Id == id {
+			riders[i] = rider
 		}
 	}
 }
@@ -108,9 +109,9 @@ func id(path string) string {
 func processDelete(r *http.Request) {
 	id := id(r.URL.Path)
 
-	for i := range pilots {
-		if pilots[i].Id == id {
-			pilots = append(pilots[:i], pilots[i+1:]...)
+	for i := range riders {
+		if riders[i].Id == id {
+			riders = append(riders[:i], riders[i+1:]...)
 			break
 		}
 	}
