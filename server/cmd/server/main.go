@@ -5,18 +5,18 @@ import (
 	"net/http"
 
 	"github.com/BorsaTeam/jams-manager/server/http/category"
-	"github.com/BorsaTeam/jams-manager/server/http/pilot"
+	"github.com/BorsaTeam/jams-manager/server/http/riders"
 )
 
 func main() {
 	categoryManager := category.NewCategoryHandler()
-	pilotHandler := pilot.NewHandler()
+	riderHandler := rider.NewHandler()
 
 	http.Handle("/categories", categoryManager.Handle())
 	http.Handle("/categories/", categoryManager.Handle())
 
-	http.Handle("/pilots", pilotHandler.Handle())
-	http.Handle("/pilots/", pilotHandler.Handle())
+	http.Handle("/riders", riderHandler.Handle())
+	http.Handle("/riders/", riderHandler.Handle())
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
