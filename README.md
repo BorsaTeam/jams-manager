@@ -1,1 +1,1 @@
-# jams-manager
+# Jams-manager
