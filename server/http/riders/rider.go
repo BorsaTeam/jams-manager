@@ -4,17 +4,20 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/BorsaTeam/jams-manager/server"
+	"github.com/BorsaTeam/jams-manager/server/database/repository"
 )
 
 var riders = server.Riders{}
 
 type Manager struct {
+	riderRepository repository.Rider
 }
 
-func NewHandler() Manager {
-	return Manager{}
+func NewHandler(rider repository.Rider) Manager {
+	return Manager{riderRepository: rider}
 }
 
 func (m Manager) Handle() http.HandlerFunc {
@@ -25,7 +28,7 @@ func (m Manager) Handle() http.HandlerFunc {
 		case http.MethodGet:
 			processGet(w, r)
 		case http.MethodPost:
-			processPost(w, r)
+			m.processPost(w, r)
 		case http.MethodDelete:
 			processDelete(r)
 		case http.MethodPut:
@@ -67,7 +70,7 @@ func findAll() server.Riders {
 	return riders
 }
 
-func processPost(w http.ResponseWriter, r *http.Request) {
+func (m *Manager) processPost(w http.ResponseWriter, r *http.Request) {
 	rider := server.Rider{}
 
 	defer r.Body.Close()
@@ -77,7 +80,30 @@ func processPost(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error while processing data"))
 	}
 
+	m.createRider(rider)
 	riders = append(riders, rider)
+}
+
+func (m Manager) createRider(r server.Rider) (string, error){
+	riderEntity := repository.RiderEntity{
+		Id:               r.Id,
+		Name:             r.Name,
+		Age:              r.Age,
+		Gender:           r.Gender,
+		City:             r.City,
+		Cpf:              r.Cpf,
+		PaidSubscription: r.PaidSubscription,
+		Sponsors:         r.Sponsors,
+		CategoryId:       r.CategoryId,
+		CreateAt:         time.Now(),
+	}
+
+	riderId, err := m.riderRepository.Save(riderEntity)
+	if err != nil {
+		return "", err
+	}
+
+	return riderId, err
 }
 
 func processPut(w http.ResponseWriter, r *http.Request) {
