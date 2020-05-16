@@ -40,4 +40,4 @@ jobs:
       uses: codecov/codecov-action@v1.0.7
       with:
         # Path to coverage file to upload
-        file: ./bin/cov.out
+        file: bin/cov.out
