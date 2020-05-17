@@ -26,6 +26,7 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+        echo ${{ github.ref }}
         
     - uses: actions/checkout@master
     - name: Login to gcloud registry
