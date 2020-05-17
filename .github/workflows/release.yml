@@ -25,7 +25,6 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
-        echo ${{ github.ref }}
         
     - uses: actions/checkout@master
     - name: Login to gcloud registry
@@ -41,7 +40,7 @@ jobs:
       run: make build
     
     - name: Build docker image
-      run: make pack TAG=${{ github.ref }}
+      run: make pack
       
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
