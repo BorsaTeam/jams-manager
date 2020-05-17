@@ -7,7 +7,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'v')
     steps:
 
     - name: Set up Go 1.x
