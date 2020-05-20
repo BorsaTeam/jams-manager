@@ -85,4 +85,3 @@ workflows:
             <<: *FILTERS
           requires:
             - test
-            - lint
