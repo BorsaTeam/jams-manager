@@ -3,6 +3,7 @@ version: 2.1
 references:
   images:
     go: &GOLANG_IMAGE cimg/go:1.14
+    ci_machine: &CI_MACHINE_IMAGE ubuntu-1604:201903-01
 
   paths:
     test-results: &TEST_RESULTS_DIR bin
@@ -25,17 +26,22 @@ references:
         - qa
         - /^pull\/.*$/
 
-
 executors:
+  jams-manager-executor:
+    machine:
+      image: *CI_MACHINE_IMAGE
+    working_directory: ~/workspace
+
   jams-executor:
     docker:
       - image: *GOLANG_IMAGE
         user: root
     working_directory: ~/workspace
 
+
 jobs:
   test:
-    executor: jams-executor
+    executor: jams-manager-executor
     environment:
       <<: *ENVIRONMENT
     steps:
@@ -45,17 +51,17 @@ jobs:
       - run:
           name: Running test
           command: |
-            mkdir -p bin
-            ls -la
-            make test
+            mkdir -p $TEST_RESULTS_DIR
+            docker-compose -f docker-compose-ci.yml run server
+
       - store_test_results:
-          path: bin
+          path: *TEST_RESULTS_DIR
       - store_artifacts:
-          path: bin
+          path: *TEST_RESULTS_DIR
       - run:
           name: codecov upload
           when: always
-          command: bash <(curl -s https://codecov.io/bash) -f /root/workspace/bin/cov.out
+          command: bash <(curl -s https://codecov.io/bash)
 
   build:
     executor: jams-executor
@@ -74,6 +80,7 @@ jobs:
           path: *TEST_RESULTS_DIR
       - store_artifacts:
           path: *TEST_RESULTS_DIR
+
 
 workflows:
   build_and_test:
