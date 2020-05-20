@@ -1,6 +1,7 @@
 version: 2.1
 
 references:
+
   images:
     go: &GOLANG_IMAGE cimg/go:1.14
 
@@ -25,63 +26,63 @@ references:
         - qa
         - /^pull\/.*$/
 
+  executors:
+    jams-manager-executor:
+      docker:
+        - image: *GOLANG_IMAGE
+          user: root
+      working_directory: ~/workspace
 
-executors:
-  jams-manager-executor:
-    docker:
-      - image: *GOLANG_IMAGE
-        user: root
-    working_directory: ~/workspace
+  jobs:
 
-jobs:
-  test:
-    executor: jams-manager-executor
-    environment:
-      <<: *ENVIRONMENT
-    steps:
+    test:
+      executor: jams-manager-executor
+      environment:
+        <<: *ENVIRONMENT
+      steps:
 
-      - checkout
+        - checkout
 
-      - run:
-          name: Running test
-          command: |
-            mkdir -p $TEST_RESULTS_DIR
-            make test
-      - store_test_results:
-          path: *TEST_RESULTS_DIR
-      - store_artifacts:
-          path: *TEST_RESULTS_DIR
-      - run:
-          name: codecov upload
-          when: always
-          command: bash <(curl -s https://codecov.io/bash)
+        - run:
+            name: Running test
+            command: |
+              mkdir -p $TEST_RESULTS_DIR
+              make test
+        - store_test_results:
+            path: *TEST_RESULTS_DIR
+        - store_artifacts:
+            path: *TEST_RESULTS_DIR
+        - run:
+            name: codecov upload
+            when: always
+            command: bash <(curl -s https://codecov.io/bash)
 
-  build:
-    executor: jams-manager-executor
-    branches:
-    steps:
-      - checkout
-      - run:
-          name: Running build
-          command: |
-            make build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - bin
-      - store_test_results:
-          path: *TEST_RESULTS_DIR
-      - store_artifacts:
-          path: *TEST_RESULTS_DIR
+    build:
+      executor: jams-manager-executor
+      branches:
+      steps:
+        - checkout
+        - run:
+            name: Running build
+            command: |
+              make build
+        - persist_to_workspace:
+            root: .
+            paths:
+              - bin
+        - store_test_results:
+            path: *TEST_RESULTS_DIR
+        - store_artifacts:
+            path: *TEST_RESULTS_DIR
 
-workflows:
-  build_and_test:
-    jobs:
-      - test:
-          filters:
-            <<: *FILTERS_CHECK
-      - build:
-          filters:
-            <<: *FILTERS
-          requires:
-            - test
+  workflows:
+    build_and_test:
+      jobs:
+        - test:
+            filters:
+              <<: *FILTERS_CHECK
+        - build:
+            filters:
+              <<: *FILTERS
+            requires:
+              - test
