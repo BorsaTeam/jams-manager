@@ -55,7 +55,7 @@ jobs:
       - run:
           name: codecov upload
           when: always
-          command: bash <(curl -s https://codecov.io/bash) -f /bin/cov.out
+          command: bash <(curl -s https://codecov.io/bash) -f /root/workspace/bin/cov.out
 
   build:
     executor: jams-executor
