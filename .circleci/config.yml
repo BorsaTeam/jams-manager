@@ -1,0 +1,88 @@
+version: 2.1
+
+references:
+  images:
+    go: &GOLANG_IMAGE cimg/go:1.14
+
+  paths:
+    test-results: &TEST_RESULTS_DIR bin
+
+  environment: &ENVIRONMENT
+    TEST_RESULTS_DIR: *TEST_RESULTS_DIR
+    BUILD_IMAGE: *GOLANG_IMAGE
+
+  filters: &FILTERS
+    branches:
+      only:
+        - /^release-.*/
+        - qa
+
+  filters-checks: &FILTERS_CHECK
+    branches:
+      only:
+        - master
+        - /^release-.*/
+        - qa
+        - /^pull\/.*$/
+
+
+executors:
+  jams-executor:
+    docker:
+      - image: *GOLANG_IMAGE
+        user: root
+    working_directory: ~/workspace
+
+jobs:
+  test:
+    executor: jams-executor
+    environment:
+      <<: *ENVIRONMENT
+    steps:
+
+      - checkout
+
+      - run:
+          name: Running test
+          command: |
+            mkdir -p bin
+            ls -la
+            make test
+      - store_test_results:
+          path: bin
+      - store_artifacts:
+          path: bin
+      - run:
+          name: codecov upload
+          when: always
+          command: bash <(curl -s https://codecov.io/bash) -f /root/workspace/bin/cov.out
+
+  build:
+    executor: jams-executor
+    branches:
+    steps:
+      - checkout
+      - run:
+          name: Running build
+          command: |
+            make build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bin
+      - store_test_results:
+          path: *TEST_RESULTS_DIR
+      - store_artifacts:
+          path: *TEST_RESULTS_DIR
+
+workflows:
+  build_and_test:
+    jobs:
+      - test:
+          filters:
+            <<: *FILTERS_CHECK
+      - build:
+          filters:
+            <<: *FILTERS
+          requires:
+            - test
