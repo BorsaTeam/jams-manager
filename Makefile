@@ -16,7 +16,7 @@ pack:
 	docker build -t gcr.io/jams-manager/jams-manager_api:$(RELEASE) .
 
 publish:
-	$(shell echo ${GCP_CREDENTIAL} | docker login -u _json_key --password-stdin https://gcr.io)
+	$(shell echo ${GCP_CREDENTIAL} | docker login -u _json_key --password-stdin https://gcr.io > /dev/null)
 	docker push gcr.io/jams-manager/jams-manager_api:$(RELEASE)
 
 release:
