@@ -80,7 +80,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - bin
+            - .
       - store_test_results:
           path: *TEST_RESULTS_DIR
       - store_artifacts:
