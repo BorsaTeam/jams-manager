@@ -80,7 +80,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - bin
+            - .
       - store_test_results:
           path: *TEST_RESULTS_DIR
       - store_artifacts:
@@ -97,14 +97,12 @@ jobs:
       - run:
           name: Creating docker image
           command: |
-            . export RELEASE_VERSION=$(echo "$CIRCLE_BRANCH"| cut -d '-' -f 2-)
-            . export DOCKER_REGISTRY="$DOCKER_REGISTRY_PROD"
+            . ./helper-ci.sh
             make pack
       - run:
           name: Pushing docker image to registry
           command: |
-            . export RELEASE_VERSION=$(echo "$CIRCLE_BRANCH"| cut -d '-' -f 2-)
-            . export DOCKER_REGISTRY="$DOCKER_REGISTRY_PROD"
+            . ./helper-ci.sh
             make publish
 
   release:
@@ -116,7 +114,7 @@ jobs:
       - run:
           name: Releasing
           command: |
-            . export RELEASE_VERSION=$(echo "$CIRCLE_BRANCH"| cut -d '-' -f 2-)
+            . ./helper-ci.sh
             make release
 
 workflows:
