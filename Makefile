@@ -20,7 +20,7 @@ publish:
 	docker push gcr.io/jams-manager/jams-manager_api:$(RELEASE)
 
 release:
-	curl --location --request POST 'https://api.github.com/repos/kaduartur/jams-manager/releases' --header 'Accept: application/vnd.github.inertia-preview+json' --header 'Authorization: token $(GITHUB_TOKEN)' --header 'Content-Type: application/json' --data-raw '{"tag_name": "$(RELEASE_VERSION)","target_commitish": "release-$(RELEASE_VERSION)","name": "Release $(RELEASE_VERSION)"}'
+	curl --location --request POST 'https://api.github.com/repos/BorsaTeam/jams-manager/releases' --header 'Accept: application/vnd.github.inertia-preview+json' --header 'Authorization: token $(GITHUB_TOKEN)' --header 'Content-Type: application/json' --data-raw '{"tag_name": "$(RELEASE_VERSION)","target_commitish": "release-$(RELEASE_VERSION)","name": "Release $(RELEASE_VERSION)"}'
 
 build-local:
 	$(GO_BUILD) -o ./$(BINARY_NAME) $(MAIN_PATH)
