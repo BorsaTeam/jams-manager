@@ -19,6 +19,8 @@ references:
         - master
         - /^release-.*/
         - /^pull\/.*$/
+        - /^feature.*/
+        - /^fix.*/
 
   filters-release: &FILTERS_RELEASE
     branches:
