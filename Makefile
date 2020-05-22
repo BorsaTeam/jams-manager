@@ -1,3 +1,5 @@
+RELEASE = $(RELEASE_VERSION)
+
 # Go parameters
 GO_CMD=go
 GO_BUILD=$(GO_CMD) build
@@ -7,22 +9,18 @@ BIN=bin
 BINARY_NAME=jams-manager
 MAIN_PATH=./server/cmd/server/main.go
 
-TAG=$(shell git rev-list HEAD --max-count=1 --abbrev-commit)
-export $(TAG)
-
 build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux $(GO_BUILD) -a -installsuffix cgo -ldflags "-X main.version=$(TAG)" -o ./$(BINARY_NAME) $(MAIN_PATH)
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux $(GO_BUILD) -a -installsuffix cgo -ldflags "-X main.version=$(RELEASE)" -o ./$(BINARY_NAME) $(MAIN_PATH)
 
 pack:
-	docker build -t gcr.io/jams-manager/jams-manager_api:$(TAG) .
+	docker build -t gcr.io/jams-manager/jams-manager_api:$(RELEASE) .
 
-upload:
-	docker push gcr.io/jams-manager/jams-manager_api:$(TAG)
+publish:
+	$(shell echo ${GCP_CREDENTIAL} | docker login -u _json_key --password-stdin https://gcr.io > /dev/null)
+	docker push gcr.io/jams-manager/jams-manager_api:$(RELEASE)
 
-deploy:
-	envsubst < k8s/deployment.yml | kubectl apply -f -
-
-ship: test pack upload deploy
+release:
+	curl --location --request POST 'https://api.github.com/repos/BorsaTeam/jams-manager/releases' --header 'Accept: application/vnd.github.inertia-preview+json' --header 'Authorization: token $(GITHUB_TOKEN)' --header 'Content-Type: application/json' --data-raw '{"tag_name": "$(RELEASE_VERSION)","target_commitish": "release-$(RELEASE_VERSION)","name": "Release $(RELEASE_VERSION)"}'
 
 build-local:
 	$(GO_BUILD) -o ./$(BINARY_NAME) $(MAIN_PATH)
