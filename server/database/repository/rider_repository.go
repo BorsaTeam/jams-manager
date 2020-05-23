@@ -21,7 +21,7 @@ type RiderEntity struct {
 	City             string     `json:"city"`
 	Cpf              string     `json:"cpf"`
 	PaidSubscription bool       `json:"paidSubscription"`
-	Sponsors         []string   `json:"sponsors"`
+	Sponsors         string   `json:"sponsors"`
 	CategoryId       string     `json:"categoryId"`
 	CreateAt         time.Time  `json:"createAt"`
 	UpdateAt         *time.Time `json:"updateAt,omitempty"`
@@ -47,7 +47,7 @@ func (r *rider) Save(rider RiderEntity) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	_, err = db.Exec(statement, id, rider.Age, rider.Gender, rider.City, rider.Cpf, rider.PaidSubscription, rider.Sponsors, rider.CategoryId, rider.CreateAt)
+	_, err = db.Exec(statement, id, rider.Name, rider.Age, rider.Gender, rider.City, rider.Cpf, rider.PaidSubscription, rider.Sponsors, rider.CategoryId, rider.CreateAt)
 	if err != nil {
 		fmt.Print(err)
 		return "", err

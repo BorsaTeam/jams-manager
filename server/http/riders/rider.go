@@ -2,6 +2,7 @@ package rider
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -78,10 +79,18 @@ func (m *Manager) processPost(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&rider)
 	if err != nil {
 		w.Write([]byte("Error while processing data"))
+		return
 	}
 
-	m.createRider(rider)
-	riders = append(riders, rider)
+	riderId, err := m.createRider(rider)
+	if err != nil {
+		fmt.Println(err)
+		w.Write([]byte("Error while processing data RIDER"))
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	w.Write([]byte(riderId))
 }
 
 func (m Manager) createRider(r server.Rider) (string, error){
@@ -93,7 +102,7 @@ func (m Manager) createRider(r server.Rider) (string, error){
 		City:             r.City,
 		Cpf:              r.Cpf,
 		PaidSubscription: r.PaidSubscription,
-		Sponsors:         r.Sponsors,
+		Sponsors:         strings.Join(r.Sponsors, ""),
 		CategoryId:       r.CategoryId,
 		CreateAt:         time.Now(),
 	}
@@ -103,7 +112,7 @@ func (m Manager) createRider(r server.Rider) (string, error){
 		return "", err
 	}
 
-	return riderId, err
+	return riderId, nil
 }
 
 func processPut(w http.ResponseWriter, r *http.Request) {
