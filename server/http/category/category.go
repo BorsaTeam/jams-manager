@@ -15,7 +15,7 @@ var categories = server.Categories{}
 type Manager struct {
 }
 
-func NewCategoryHandler() Manager {
+func NewHandler() Manager {
 	return Manager{}
 }
 
