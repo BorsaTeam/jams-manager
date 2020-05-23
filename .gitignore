@@ -12,4 +12,6 @@
 *.out
 .idea/**
 
-go.sum
+k8s
+
+jams-manager
