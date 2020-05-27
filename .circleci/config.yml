@@ -45,16 +45,13 @@ executors:
         user: root
     working_directory: /workspace
 
-
 jobs:
   test:
     executor: jams-manager-executor
     environment:
       <<: *ENVIRONMENT
     steps:
-
       - checkout
-
       - run:
           name: Running test
           command: |
