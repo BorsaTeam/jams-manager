@@ -9,6 +9,7 @@ import (
 
 	"github.com/BorsaTeam/jams-manager/server"
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
+	"github.com/BorsaTeam/jams-manager/server/error/errors"
 )
 
 var riders = server.Riders{}
@@ -27,7 +28,7 @@ func (m Manager) Handle() http.HandlerFunc {
 
 		switch r.Method {
 		case http.MethodGet:
-			processGet(w, r)
+			m.processGet(w, r)
 		case http.MethodPost:
 			m.processPost(w, r)
 		case http.MethodDelete:
@@ -35,14 +36,20 @@ func (m Manager) Handle() http.HandlerFunc {
 		case http.MethodPut:
 			processPut(w, r)
 		default:
-			http.Error(w,http.StatusText(http.StatusMethodNotAllowed),http.StatusMethodNotAllowed)
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		}
 	}
 }
 
-func processGet(w http.ResponseWriter, r *http.Request) {
+func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 	if id := id(r.URL.Path); id != "" {
-		rider := findOne(id)
+		rider, err := m.findOne(id)
+		if err != nil {
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			json.NewEncoder(w).Encode(errors.Unknown)
+			return
+		}
 		if rider.Id == "" {
 			w.WriteHeader(http.StatusNotFound)
 			return
@@ -57,21 +64,33 @@ func processGet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(findAll())
 }
 
-func findOne(id string) server.Rider {
+func (m Manager) findOne(id string) (server.Rider, error) {
 
-	for i := range riders {
-		if riders[i].Id == id {
-			return riders[i]
-		}
+	riderEntity, err := m.riderRepository.FindOne(id)
+	if err != nil {
+		return server.Rider{}, err
 	}
-	return server.Rider{}
+
+	rider := server.Rider{
+		Id:               riderEntity.Id,
+		Name:             riderEntity.Name,
+		Age:              riderEntity.Age,
+		Gender:           riderEntity.Gender,
+		City:             riderEntity.City,
+		Cpf:              riderEntity.Cpf,
+		PaidSubscription: riderEntity.PaidSubscription,
+		Sponsors:         riderEntity.Sponsors,
+		CategoryId:       riderEntity.CategoryId,
+	}
+
+	return rider, nil
 }
 
 func findAll() server.Riders {
 	return riders
 }
 
-func (m *Manager) processPost(w http.ResponseWriter, r *http.Request) {
+func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 	rider := server.Rider{}
 
 	defer r.Body.Close()
@@ -93,7 +112,7 @@ func (m *Manager) processPost(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(riderId))
 }
 
-func (m Manager) createRider(r server.Rider) (string, error){
+func (m Manager) createRider(r server.Rider) (string, error) {
 	riderEntity := repository.RiderEntity{
 		Id:               r.Id,
 		Name:             r.Name,
@@ -102,7 +121,7 @@ func (m Manager) createRider(r server.Rider) (string, error){
 		City:             r.City,
 		Cpf:              r.Cpf,
 		PaidSubscription: r.PaidSubscription,
-		Sponsors:         strings.Join(r.Sponsors, ""),
+		Sponsors:         r.Sponsors,
 		CategoryId:       r.CategoryId,
 		CreateAt:         time.Now(),
 	}
