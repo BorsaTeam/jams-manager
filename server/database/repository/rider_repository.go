@@ -62,7 +62,7 @@ func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 		rider.Sponsors,
 		rider.CategoryId,
 		rider.CreateAt,
-		rider.CreateAt)
+		rider.UpdateAt)
 	if err != nil {
 		return "", err
 	}
