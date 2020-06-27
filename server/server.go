@@ -17,7 +17,7 @@ type (
 		City             string   `json:"city"`
 		Cpf              string   `json:"cpf"`
 		PaidSubscription bool     `json:"paidSubscription"`
-		Sponsors         string `json:"sponsors"`
+		Sponsors         []string `json:"sponsors"`
 		CategoryId       string   `json:"categoryId"`
 	}
 	Riders []Rider

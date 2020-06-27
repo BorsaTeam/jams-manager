@@ -70,6 +70,7 @@ func (m Manager) findOne(id string) (server.Rider, error) {
 	if err != nil {
 		return server.Rider{}, err
 	}
+	sponsorsString := strings.Split(riderEntity.Sponsors, ",")
 
 	rider := server.Rider{
 		Id:               riderEntity.Id,
@@ -79,7 +80,7 @@ func (m Manager) findOne(id string) (server.Rider, error) {
 		City:             riderEntity.City,
 		Cpf:              riderEntity.Cpf,
 		PaidSubscription: riderEntity.PaidSubscription,
-		Sponsors:         riderEntity.Sponsors,
+		Sponsors:         sponsorsString,
 		CategoryId:       riderEntity.CategoryId,
 	}
 
@@ -113,6 +114,8 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m Manager) createRider(r server.Rider) (string, error) {
+	sponsorsString := strings.Join(r.Sponsors, ",")
+
 	riderEntity := repository.RiderEntity{
 		Id:               r.Id,
 		Name:             r.Name,
@@ -121,7 +124,7 @@ func (m Manager) createRider(r server.Rider) (string, error) {
 		City:             r.City,
 		Cpf:              r.Cpf,
 		PaidSubscription: r.PaidSubscription,
-		Sponsors:         r.Sponsors,
+		Sponsors:         sponsorsString,
 		CategoryId:       r.CategoryId,
 		CreateAt:         time.Now(),
 	}

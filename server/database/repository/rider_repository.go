@@ -50,8 +50,19 @@ func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
-	_, err = db.Exec(statement, id, rider.Name, rider.Age, rider.Gender, rider.City, rider.Cpf, rider.PaidSubscription, rider.Sponsors, rider.CategoryId, rider.CreateAt, rider.CreateAt)
+
+	_, err = db.Exec(statement,
+		id,
+		rider.Name,
+		rider.Age,
+		rider.Gender,
+		rider.City,
+		rider.Cpf,
+		rider.PaidSubscription,
+		rider.Sponsors,
+		rider.CategoryId,
+		rider.CreateAt,
+		rider.CreateAt)
 	if err != nil {
 		return "", err
 	}
