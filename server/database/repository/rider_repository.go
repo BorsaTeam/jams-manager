@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -46,7 +45,7 @@ func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 	defer db.Close()
 
 	id, err := uuid.NewRandom()
-	fmt.Println(id)
+
 	if err != nil {
 		return "", err
 	}
