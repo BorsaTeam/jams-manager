@@ -9,6 +9,10 @@ type (
 	}
 	Categories []Category
 
+	Score struct {
+		Score string `json:"score"`
+	}
+
 	Rider struct {
 		Id               string   `json:"id"`
 		Name             string   `json:"name"`
