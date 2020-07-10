@@ -2,7 +2,6 @@ package score
 
 import (
 	"net/http"
-
 	"github.com/BorsaTeam/jams-manager/server"
 )
 

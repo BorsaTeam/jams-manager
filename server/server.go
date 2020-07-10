@@ -10,11 +10,7 @@ type (
 	Categories []Category
 
 	Score struct {
-<<<<<<< HEAD
 		Score float32 `json:"score"`
-=======
-		Score string `json:"score"`
->>>>>>> b6a69e72af13ecaa0f49ade8fe6deaa94c023fd2
 	}
 
 	Rider struct {
@@ -27,6 +23,7 @@ type (
 		PaidSubscription bool     `json:"paidSubscription"`
 		Sponsors         []string `json:"sponsors"`
 		CategoryId       string   `json:"categoryId"`
+		Score            float32  `json:"score"`
 	}
 	Riders []Rider
 )
