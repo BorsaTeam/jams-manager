@@ -2,7 +2,7 @@ package rider
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -104,7 +104,7 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 
 	riderId, err := m.createRider(rider)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		w.Write([]byte("Error while processing data RIDER"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return

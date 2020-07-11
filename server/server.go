@@ -1,11 +1,18 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type (
+	CategoryId string
+
 	Category struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id        CategoryId `json:"id"`
+		Name      string     `json:"name"`
+		CreatedAt time.Time  `json:"createdAt"`
+		UpdatedAt *time.Time  `json:"updatedAt,omitempty"`
 	}
 	Categories []Category
 
@@ -32,6 +39,6 @@ type RiderHandler interface {
 }
 
 type JamsError struct {
-	Code string `json:"code"`
+	Code    string `json:"code"`
 	Message string `json:"message"`
 }
