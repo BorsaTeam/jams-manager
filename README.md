@@ -4,3 +4,4 @@
 # jams-manager
 Jams Manager is an open source application which provides a full integration between radical sports competitors and judges. No matter the event and the time, the competitors can subscribe by adding its personal information details, such as: city, sponsors, age and etc. After this, when the event is being realized, the judges can give a note to the rider by the turn and tricks done. 
 
+<img class="special-img-class" src="docs/images/garret.jpg" />
