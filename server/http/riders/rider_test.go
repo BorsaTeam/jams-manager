@@ -72,7 +72,12 @@ func TestNewRiderHandler(t *testing.T) {
 
 type repositoryMock struct {
 	riderId string
+	rider repository.RiderEntity
 	error   error
+}
+
+func (r repositoryMock) FindOne(id string) (repository.RiderEntity, error) {
+	return r.rider, r.error
 }
 
 func (r repositoryMock) Save(rider repository.RiderEntity) (string, error) {

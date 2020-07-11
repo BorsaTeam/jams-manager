@@ -30,3 +30,8 @@ type CategoryHandler interface {
 type RiderHandler interface {
 	Handle() http.HandlerFunc
 }
+
+type JamsError struct {
+	Code string `json:"code"`
+	Message string `json:"message"`
+}
