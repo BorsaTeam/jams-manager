@@ -38,7 +38,7 @@ func NewRiderRepository(d database.DbConnection) RiderRepo {
 func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 
 	statement := `INSERT INTO public.RIDERS
-				  (rider_id, name, age, gender, city, cpf, paidsubscription, sponsors, category_id, created, updated)
+				  (rider_id, name, age, gender, city, cpf, paid_subscription, sponsors, category_id, created, updated)
 				  VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);`
 
 	db := r.database.ConnectHandle()

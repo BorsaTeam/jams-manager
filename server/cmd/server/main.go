@@ -14,8 +14,9 @@ func main() {
 	dbConnection := database.NewPgManager()
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
+	categoryRepo := repository.NewCategory(dbConnection)
 
-	categoryManager := category.NewHandler()
+	categoryManager := category.NewHandler(categoryRepo)
 	riderHandler := rider.NewHandler(riderRepository)
 
 	http.Handle("/categories", categoryManager.Handle())
