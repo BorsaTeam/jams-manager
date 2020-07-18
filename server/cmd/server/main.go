@@ -8,21 +8,26 @@ import (
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
 	"github.com/BorsaTeam/jams-manager/server/http/category"
 	"github.com/BorsaTeam/jams-manager/server/http/riders"
+	"github.com/BorsaTeam/jams-manager/server/http/score"
 )
 
 func main() {
 	dbConnection := database.NewPgManager()
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
+	scoreRepository := repository.NewScoreRepository(dbConnection)
 
 	categoryManager := category.NewHandler()
 	riderHandler := rider.NewHandler(riderRepository)
+	scoreHandler := score.NewHandler(scoreRepository)
 
 	http.Handle("/categories", categoryManager.Handle())
 	http.Handle("/categories/", categoryManager.Handle())
 
 	http.Handle("/riders", riderHandler.Handle())
 	http.Handle("/riders/", riderHandler.Handle())
+
+	http.Handle("/score", scoreHandler.Handle())
 
 	log.Println("Running jams-manager at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

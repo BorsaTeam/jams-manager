@@ -10,7 +10,9 @@ type (
 	Categories []Category
 
 	Score struct {
-		Score float32 `json:"score"`
+		Score   float32 `json:"score"`
+		Id      string  `json:"id"`
+		RiderId string  `json:"riderId"`
 	}
 
 	Rider struct {
@@ -23,7 +25,6 @@ type (
 		PaidSubscription bool     `json:"paidSubscription"`
 		Sponsors         []string `json:"sponsors"`
 		CategoryId       string   `json:"categoryId"`
-		Score            float32  `json:"score"`
 	}
 	Riders []Rider
 )
@@ -36,7 +37,11 @@ type RiderHandler interface {
 	Handle() http.HandlerFunc
 }
 
+type ScoreHandler interface {
+	Handle() http.HandlerFunc
+}
+
 type JamsError struct {
-	Code string `json:"code"`
+	Code    string `json:"code"`
 	Message string `json:"message"`
 }
