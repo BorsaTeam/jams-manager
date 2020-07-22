@@ -2,10 +2,7 @@ package score
 
 import (
 	"encoding/json"
-	_ "encoding/json"
 	"net/http"
-	_ "net/http"
-	_ "strings"
 	"time"
 
 	"github.com/BorsaTeam/jams-manager/server"
@@ -28,7 +25,6 @@ func (m Manager) Handle() http.HandlerFunc {
 		switch r.Method {
 		case http.MethodPost:
 			m.processPost(w, r)
-
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
@@ -45,6 +41,7 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Errow while processing data"))
 		return
 	}
+
 	scoreId, err := m.createScore(score)
 	if err != nil {
 		w.Write([]byte("Error while processing data score"))

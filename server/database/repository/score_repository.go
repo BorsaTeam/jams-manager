@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/BorsaTeam/jams-manager/server/database"
 )
@@ -23,12 +24,16 @@ type ScoreRepo struct {
 	database database.DbConnection
 }
 
-func NewScoreRepository(d database.DbConnection) ScoreRepo{
+func NewScoreRepository(d database.DbConnection) ScoreRepo {
 	return ScoreRepo{database: d}
 }
 
 func (s ScoreRepo) Save(score ScoreEntity) (string, error) {
 
-	fmt.Println("fake save")
-	return "Valdemar", nil
+	id, err := uuid.NewRandom()
+
+	if err != nil {
+		return "", err
+	}
+	return id.String(), nil
 }

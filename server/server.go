@@ -11,7 +11,7 @@ type (
 
 	Score struct {
 		Score   float32 `json:"score"`
-		Id      string  `json:"id"`
+		Id      string  `json:"id,omitempty"`
 		RiderId string  `json:"riderId"`
 	}
 
