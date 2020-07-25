@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/BorsaTeam/jams-manager/server"
+	"github.com/BorsaTeam/jams-manager/server/database/repository"
 )
 
 func TestNewCategoryHandler(t *testing.T) {
@@ -37,7 +38,7 @@ func TestNewCategoryHandler(t *testing.T) {
 		{
 			name: "success get",
 			fields: Fields{
-				method: http.MethodGet,
+				method:   http.MethodGet,
 				category: server.Category{},
 			},
 			out: func() http.HandlerFunc {
@@ -48,7 +49,7 @@ func TestNewCategoryHandler(t *testing.T) {
 		{
 			name: "success delete",
 			fields: Fields{
-				method: http.MethodDelete,
+				method:   http.MethodDelete,
 				category: server.Category{},
 			},
 			out: func() http.HandlerFunc {
@@ -59,7 +60,7 @@ func TestNewCategoryHandler(t *testing.T) {
 		{
 			name: "error status 405",
 			fields: Fields{
-				method: http.MethodPut,
+				method:   http.MethodPut,
 				category: server.Category{},
 			},
 			out: func() http.HandlerFunc {
@@ -72,8 +73,7 @@ func TestNewCategoryHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
-			h := NewHandler()
+			h := NewHandler(categoryRepo{})
 
 			body, _ := json.Marshal(tt.fields.category)
 
@@ -92,4 +92,18 @@ func TestNewCategoryHandler(t *testing.T) {
 			}
 		})
 	}
+}
+
+type categoryRepo struct {
+}
+
+func (categoryRepo) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
+	return "", nil
+}
+func (categoryRepo) FindAll() ([]repository.CategoryEntity, error) {
+	return nil, nil
+}
+
+func (categoryRepo) Delete(id repository.CategoryId) error {
+	return nil
 }

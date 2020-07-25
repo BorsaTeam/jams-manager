@@ -16,8 +16,9 @@ func main() {
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
 	scoreRepository := repository.NewScoreRepository(dbConnection)
+	categoryRepo := repository.NewCategory(dbConnection)
 
-	categoryManager := category.NewHandler()
+	categoryManager := category.NewHandler(categoryRepo)
 	riderHandler := rider.NewHandler(riderRepository)
 	scoreHandler := score.NewHandler(scoreRepository)
 

@@ -58,7 +58,7 @@ func (m Manager) createScore(s server.Score) (string, error) {
 		Score:    s.Score,
 		Id:       s.Id,
 		RiderId:  s.RiderId,
-		CreateAt: time.Now(),
+		CreatedAt: time.Now(),
 	}
 
 	scoreId, err := m.scoreRepository.Save(scoreEntity)

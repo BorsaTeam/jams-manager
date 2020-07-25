@@ -11,5 +11,3 @@ services:
       - POSTGRES_DB=jams
       - POSTGRES_USER=jams
       - POSTGRES_PASSWORD=jams
-      - MAX_CONNECTIONS=300
-
