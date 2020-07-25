@@ -16,8 +16,8 @@ type ScoreEntity struct {
 	Score    float32    `json:"score"`
 	Id       string     `json:"id"`
 	RiderId  string     `json:"riderId"`
-	CreateAt time.Time  `json:"createAt"`
-	UpdateAt *time.Time `json:"updateAt,omitempty"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
 type ScoreRepo struct {
@@ -30,10 +30,26 @@ func NewScoreRepository(d database.DbConnection) ScoreRepo {
 
 func (s ScoreRepo) Save(score ScoreEntity) (string, error) {
 
-	id, err := uuid.NewRandom()
+	statement := `INSERT INTO SCORES
+	(ID, RIDER_ID, SCORE, CREATED_AT)
+	VALUES($1, $2, $3, $4);`
 
+	db := s.database.ConnectHandle()
+	defer db.Close()
+
+	id, err := uuid.NewRandom()
 	if err != nil {
 		return "", err
 	}
+
+	_, err = db.Exec(statement,
+		id,
+		score.RiderId,
+		score.Score,
+		score.CreatedAt)
+	if err != nil {
+		return "", err
+	}
+
 	return id.String(), nil
 }
