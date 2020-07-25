@@ -44,8 +44,9 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 
 	scoreId, err := m.createScore(score)
 	if err != nil {
-		w.Write([]byte("Error while processing data score"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.Write([]byte("Error while processing data score"))
+
 		return
 	}
 
@@ -55,9 +56,9 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 func (m Manager) createScore(s server.Score) (string, error) {
 
 	scoreEntity := repository.ScoreEntity{
-		Score:    s.Score,
-		Id:       s.Id,
-		RiderId:  s.RiderId,
+		Score:     s.Score,
+		Id:        s.Id,
+		RiderId:   s.RiderId,
 		CreatedAt: time.Now(),
 	}
 
@@ -68,4 +69,3 @@ func (m Manager) createScore(s server.Score) (string, error) {
 
 	return scoreId, nil
 }
-

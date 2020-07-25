@@ -31,7 +31,7 @@ func NewScoreRepository(d database.DbConnection) ScoreRepo {
 func (s ScoreRepo) Save(score ScoreEntity) (string, error) {
 
 	statement := `INSERT INTO SCORES
-	(ID, RIDER_ID, SCORE, CREATED_AT)
+	(SCORE_ID, RIDER_ID, SCORE, CREATED_AT)
 	VALUES($1, $2, $3, $4);`
 
 	db := s.database.ConnectHandle()
