@@ -13,9 +13,9 @@ type Score interface {
 }
 
 type ScoreEntity struct {
-	Score    float32    `json:"score"`
 	Id       string     `json:"id"`
 	RiderId  string     `json:"riderId"`
+	Score    float32    `json:"score"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
@@ -29,7 +29,6 @@ func NewScoreRepository(d database.DbConnection) ScoreRepo {
 }
 
 func (s ScoreRepo) Save(score ScoreEntity) (string, error) {
-
 	statement := `INSERT INTO SCORES
 	(SCORE_ID, RIDER_ID, SCORE, CREATED_AT)
 	VALUES($1, $2, $3, $4);`
