@@ -13,6 +13,7 @@ import (
 
 func main() {
 	dbConnection := database.NewPgManager()
+	dbConnection.TestConnection()
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
 	scoreRepository := repository.NewScoreRepository(dbConnection)
