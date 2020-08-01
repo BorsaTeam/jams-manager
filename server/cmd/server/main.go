@@ -15,6 +15,7 @@ func main() {
 	dbConnection.TestConnection()
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
+
 	categoryManager := category.NewHandler()
 	riderHandler := rider.NewHandler(riderRepository)
 
