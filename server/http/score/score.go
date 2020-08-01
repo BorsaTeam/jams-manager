@@ -9,8 +9,6 @@ import (
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
 )
 
-var score = server.Score{}
-
 type Manager struct {
 	scoreRepository repository.Score
 }
