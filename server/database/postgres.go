@@ -11,13 +11,13 @@ import (
 )
 
 const (
-	driveName = "postgres"
+	driveName         = "postgres"
 	dataSourcePattern = "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable"
 )
 
 var (
-	host = os.Getenv("DATABASE_HOST")
-	port = os.Getenv("DATABASE_PORT")
+	host   = os.Getenv("DATABASE_HOST")
+	port   = os.Getenv("DATABASE_PORT")
 	dbname = os.Getenv("DATABASE_NAME")
 )
 
@@ -26,7 +26,6 @@ type DbConnection interface {
 }
 
 type PgManager struct {
-
 }
 
 func NewPgManager() PgManager {
@@ -39,6 +38,14 @@ func (p PgManager) ConnectHandle() *sql.DB {
 		log.Panic(err)
 	}
 	return db
+}
+
+func (p PgManager) TestConnection() {
+	c := p.ConnectHandle()
+	err := c.Ping()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
 
 func (p PgManager) dataSource() string {

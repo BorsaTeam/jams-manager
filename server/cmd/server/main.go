@@ -12,9 +12,9 @@ import (
 
 func main() {
 	dbConnection := database.NewPgManager()
+	dbConnection.TestConnection()
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
-
 	categoryManager := category.NewHandler()
 	riderHandler := rider.NewHandler(riderRepository)
 
