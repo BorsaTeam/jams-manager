@@ -16,6 +16,12 @@ type (
 	}
 	Categories []Category
 
+	Score struct {
+		Score   float32 `json:"score"`
+		Id      string  `json:"id,omitempty"`
+		RiderId string  `json:"riderId"`
+	}
+
 	Rider struct {
 		Id               string   `json:"id"`
 		Name             string   `json:"name"`
@@ -35,6 +41,10 @@ type CategoryHandler interface {
 }
 
 type RiderHandler interface {
+	Handle() http.HandlerFunc
+}
+
+type ScoreHandler interface {
 	Handle() http.HandlerFunc
 }
 
