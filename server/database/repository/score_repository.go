@@ -13,9 +13,9 @@ type Score interface {
 }
 
 type ScoreEntity struct {
-	Id       string     `json:"id"`
-	RiderId  string     `json:"riderId"`
-	Score    float32    `json:"score"`
+	Id        string     `json:"id"`
+	RiderId   string     `json:"riderId"`
+	Score     float32    `json:"score"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
