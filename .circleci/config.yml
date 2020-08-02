@@ -142,5 +142,5 @@ workflows:
           filters:
             <<: *FILTERS_RELEASE
           requires:
-            - unit-test
+            - unit_test
             - lint
