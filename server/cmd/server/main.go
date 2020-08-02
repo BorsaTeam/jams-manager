@@ -29,7 +29,7 @@ func main() {
 	http.Handle("/riders", riderHandler.Handle())
 	http.Handle("/riders/", riderHandler.Handle())
 
-	http.Handle("/score", scoreHandler.Handle())
+	http.Handle("/scores", scoreHandler.Handle())
 
 	log.Println("Running jams-manager at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
