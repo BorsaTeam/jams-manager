@@ -15,8 +15,6 @@ type Manager struct {
 	repo repository.Category
 }
 
-var test = ""
-
 func NewHandler(repo repository.Category) Manager {
 	return Manager{repo: repo}
 }
