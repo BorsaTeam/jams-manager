@@ -4,7 +4,7 @@ references:
   images:
     go: &GOLANG_IMAGE cimg/go:1.14
     python: &PYTHON_IMAGE circleci/python:2.7-stretch
-    ci_machine: &CI_MACHINE_IMAGE ubuntu-1604:202004-01
+    ci_machine: &CI_MACHINE_IMAGE ubuntu-1604:201903-01
 
   paths:
     test-results: &TEST_RESULTS_DIR bin
@@ -140,7 +140,7 @@ workflows:
             <<: *FILTERS_CHECK
       - build:
           filters:
-            <<: *FILTERS_RELEASE
+            <<: *FILTERS_CHECK
           requires:
             - unit_test
             - lint
