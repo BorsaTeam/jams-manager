@@ -130,7 +130,7 @@ jobs:
             . ./helper-ci.sh
             make release
 workflows:
-  code-check:
+  build-for-requests:
     jobs:
       - lint:
           filters:
