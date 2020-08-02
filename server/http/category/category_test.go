@@ -115,8 +115,7 @@ func TestNewCategoryHandler(t *testing.T) {
 }
 
 type categoryRepoMock struct {
-	err error
-	id  string
+
 }
 
 func (categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {

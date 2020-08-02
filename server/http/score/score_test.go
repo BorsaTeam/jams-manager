@@ -65,7 +65,7 @@ func TestHandle(t *testing.T) {
 			out: func() http.HandlerFunc {
 				return func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusUnprocessableEntity)
-					w.Write([]byte("Error while processing data score"))
+					_, _ = w.Write([]byte("Error while processing data score"))
 				}
 			}(),
 		},
