@@ -138,7 +138,6 @@ workflows:
       - unit_test:
           filters:
             <<: *FILTERS_CHECK
-    build:
       - build:
           filters:
             <<: *FILTERS_RELEASE
