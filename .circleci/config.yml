@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@1.0.2
+
 references:
   images:
     go: &GOLANG_IMAGE cimg/go:1.14
@@ -63,9 +66,9 @@ jobs:
       - store_artifacts:
           path: *TEST_RESULTS_DIR
       - run:
-          name: codecov upload
+          name: codecov/upload
           when: always
-          command: bash <(curl -s https://codecov.io/bash)
+          file: *TEST_RESULTS_DIR
 
   lint:
     executor: jams-test-executor
