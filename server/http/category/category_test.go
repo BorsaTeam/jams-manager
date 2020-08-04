@@ -6,25 +6,27 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/BorsaTeam/jams-manager/server"
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
 )
 
 func TestNewCategoryHandler(t *testing.T) {
-	type Fields struct {
+	type in struct {
 		method   string
 		category server.Category
+		repo     repository.Category
 	}
 
 	tests := []struct {
-		name   string
-		fields Fields
-		out    http.HandlerFunc
+		name string
+		in   in
+		out  http.HandlerFunc
 	}{
 		{
 			name: "success post",
-			fields: Fields{
+			in: in{
 				method: http.MethodPost,
 				category: server.Category{
 					Name: "pro",
@@ -37,7 +39,7 @@ func TestNewCategoryHandler(t *testing.T) {
 		},
 		{
 			name: "success get",
-			fields: Fields{
+			in: in{
 				method:   http.MethodGet,
 				category: server.Category{},
 			},
@@ -48,7 +50,7 @@ func TestNewCategoryHandler(t *testing.T) {
 		},
 		{
 			name: "success delete",
-			fields: Fields{
+			in: in{
 				method:   http.MethodDelete,
 				category: server.Category{},
 			},
@@ -59,7 +61,7 @@ func TestNewCategoryHandler(t *testing.T) {
 		},
 		{
 			name: "error status 405",
-			fields: Fields{
+			in: in{
 				method:   http.MethodPut,
 				category: server.Category{},
 			},
@@ -69,15 +71,33 @@ func TestNewCategoryHandler(t *testing.T) {
 				}
 			}(),
 		},
+		{
+			name: "run method not allowed",
+			in: in{
+				method: http.MethodTrace,
+				category: server.Category{
+					Id:        "",
+					Name:      "",
+					CreatedAt: time.Time{},
+					UpdatedAt: nil,
+				},
+				repo: categoryRepoMock{},
+			},
+			out: func() http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusMethodNotAllowed)
+				}
+			}(),
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			h := NewHandler(categoryRepo{})
+			h := NewHandler(categoryRepoMock{})
 
-			body, _ := json.Marshal(tt.fields.category)
+			body, _ := json.Marshal(tt.in.category)
 
-			r, _ := http.NewRequest(tt.fields.method, "/categories", bytes.NewReader(body))
+			r, _ := http.NewRequest(tt.in.method, "/categories", bytes.NewReader(body))
 
 			w := httptest.NewRecorder()
 
@@ -94,16 +114,17 @@ func TestNewCategoryHandler(t *testing.T) {
 	}
 }
 
-type categoryRepo struct {
+type categoryRepoMock struct {
+
 }
 
-func (categoryRepo) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
+func (categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
 	return "", nil
 }
-func (categoryRepo) FindAll() ([]repository.CategoryEntity, error) {
+func (categoryRepoMock) FindAll() ([]repository.CategoryEntity, error) {
 	return nil, nil
 }
 
-func (categoryRepo) Delete(id repository.CategoryId) error {
+func (categoryRepoMock) Delete(id repository.CategoryId) error {
 	return nil
 }

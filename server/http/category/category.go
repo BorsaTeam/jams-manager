@@ -11,8 +11,6 @@ import (
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
 )
 
-var categories = server.Categories{}
-
 type Manager struct {
 	repo repository.Category
 }
@@ -47,12 +45,12 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 	categoryId, err := m.createCategory(category)
 	if err != nil {
 		log.Println(err)
-		w.Write([]byte("Error while processing data CATEGORY"))
+		_, _ = w.Write([]byte("Error while processing data CATEGORY"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
-	w.Write([]byte(categoryId))
+	_, _ = w.Write([]byte(categoryId))
 }
 
 func (m Manager) createCategory(category server.Category) (server.CategoryId, error) {
@@ -73,13 +71,13 @@ func (m Manager) processFindAll(w http.ResponseWriter) {
 	categories, err := m.findAll()
 	if err != nil {
 		log.Println(err)
-		w.Write([]byte("Error while processing data CATEGORY"))
+		_, _ = w.Write([]byte("Error while processing data CATEGORY"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(categories)
+	_ = json.NewEncoder(w).Encode(categories)
 }
 
 func (m Manager) findAll() (server.Categories, error) {
@@ -103,7 +101,7 @@ func (m Manager) processDelete(w http.ResponseWriter, r *http.Request) {
 	id := id(r.URL.Path)
 	if err := m.delete(server.CategoryId(id)); err != nil {
 		log.Println(err)
-		w.Write([]byte("Error while processing data CATEGORY"))
+		_, _ = w.Write([]byte("Error while processing data CATEGORY"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}

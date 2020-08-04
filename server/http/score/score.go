@@ -36,18 +36,18 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&score)
 	if err != nil {
-		w.Write([]byte("Errow while processing data"))
+		_, _ = w.Write([]byte("Errow while processing data"))
 		return
 	}
 
 	scoreId, err := m.createScore(score)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		w.Write([]byte("Error while processing data score"))
+		_, _ = w.Write([]byte("Error while processing data score"))
 		return
 	}
 
-	w.Write([]byte(scoreId))
+	_, _ = w.Write([]byte(scoreId))
 }
 
 func (m Manager) createScore(s server.Score) (string, error) {
