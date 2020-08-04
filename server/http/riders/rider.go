@@ -47,7 +47,7 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnprocessableEntity)
-			json.NewEncoder(w).Encode(errors.Unknown)
+			_ = json.NewEncoder(w).Encode(errors.Unknown)
 			return
 		}
 		if rider.Id == "" {
@@ -56,12 +56,12 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(rider)
+		_ = json.NewEncoder(w).Encode(rider)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(findAll())
+	_ = json.NewEncoder(w).Encode(findAll())
 }
 
 func (m Manager) findOne(id string) (server.Rider, error) {
@@ -98,19 +98,19 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&rider)
 	if err != nil {
-		w.Write([]byte("Error while processing data"))
+		_, _ = w.Write([]byte("Error while processing data"))
 		return
 	}
 
 	riderId, err := m.createRider(rider)
 	if err != nil {
 		log.Println(err)
-		w.Write([]byte("Error while processing data RIDER"))
+		_, _ = w.Write([]byte("Error while processing data RIDER"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
-	w.Write([]byte(riderId))
+	_, _ = w.Write([]byte(riderId))
 }
 
 func (m Manager) createRider(r server.Rider) (string, error) {
@@ -144,7 +144,7 @@ func processPut(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&rider)
 	if err != nil {
-		w.Write([]byte("Error while processing data"))
+		_, _ = w.Write([]byte("Error while processing data"))
 	}
 
 	id := id(r.URL.Path)

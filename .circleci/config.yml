@@ -4,7 +4,7 @@ references:
   images:
     go: &GOLANG_IMAGE cimg/go:1.14
     python: &PYTHON_IMAGE circleci/python:2.7-stretch
-    ci_machine: &CI_MACHINE_IMAGE ubuntu-1604:201903-01
+    ci_machine: &CI_MACHINE_IMAGE ubuntu-1604:202004-01
 
   paths:
     test-results: &TEST_RESULTS_DIR bin
@@ -28,7 +28,7 @@ references:
         - /^release-.*/
 
 executors:
-  jams-manager-executor:
+  jams-test-executor:
     machine:
       image: *CI_MACHINE_IMAGE
     working_directory: ~/workspace
@@ -46,8 +46,8 @@ executors:
     working_directory: /workspace
 
 jobs:
-  test:
-    executor: jams-manager-executor
+  unit_test:
+    executor: jams-test-executor
     environment:
       <<: *ENVIRONMENT
     steps:
@@ -66,6 +66,20 @@ jobs:
           name: codecov upload
           when: always
           command: bash <(curl -s https://codecov.io/bash)
+
+  lint:
+    executor: jams-test-executor
+    steps:
+      - checkout
+      - run:
+          name: Install golangci-lint
+          command: |
+            download=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
+            wget -O- -q $download |sudo sh -s -- -b /go/bin/ v1.24.0
+      - run:
+          name: lint
+          command: |
+            /go/bin/golangci-lint run --no-config --issues-exit-code=1 --deadline=10m -v
 
   build:
     executor: jams-executor
@@ -86,7 +100,7 @@ jobs:
           path: *TEST_RESULTS_DIR
 
   docker:
-    executor: jams-manager-executor
+    executor: jams-test-executor
     environment:
       <<: *ENVIRONMENT
     steps:
@@ -115,25 +129,18 @@ jobs:
           command: |
             . ./helper-ci.sh
             make release
-
 workflows:
-  build_and_test:
+  build-for-requests:
     jobs:
-      - test:
+      - lint:
+          filters:
+            <<: *FILTERS_CHECK
+      - unit_test:
           filters:
             <<: *FILTERS_CHECK
       - build:
           filters:
-            <<: *FILTERS_RELEASE
+            <<: *FILTERS_CHECK
           requires:
-            - test
-      - docker:
-          filters:
-            <<: *FILTERS_RELEASE
-          requires:
-            - build
-      - release:
-          filters:
-            <<: *FILTERS_RELEASE
-          requires:
-            - build
+            - unit_test
+            - lint
