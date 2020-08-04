@@ -35,20 +35,20 @@ func (j JudgeRepo) save(judge JudgeEntity) (string, error) {
 	db := j.database.ConnectHandle()
 	defer db.Close()
 
-	id, err := uuid.NewRandom()
+	JudgeId, err := uuid.NewRandom()
 	if err != nil {
 		return "", err
 	}
 
 	_, err = db.Exec(statement,
-		judge.JudgeId,
+		JudgeId,
 		judge.Password,
 		judge.CreatedAt)
 	if err != nil {
 		return "", err
 	}
 
-	return id.String(), nil
+	return JudgeId.String(), nil
 
 }
 
