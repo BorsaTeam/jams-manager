@@ -36,7 +36,7 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&score)
 	if err != nil {
-		_, _ = w.Write([]byte("Errow while processing data"))
+		_, _ = w.Write([]byte("Error while processing data"))
 		return
 	}
 

@@ -44,9 +44,9 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 
 	categoryId, err := m.createCategory(category)
 	if err != nil {
-		log.Println(err)
-		_, _ = w.Write([]byte("Error while processing data CATEGORY"))
 		w.WriteHeader(http.StatusUnprocessableEntity)
+		_, _ = w.Write([]byte("Error while processing data CATEGORY"))
+		log.Println(err)
 		return
 	}
 

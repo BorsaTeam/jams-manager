@@ -114,17 +114,15 @@ func TestNewCategoryHandler(t *testing.T) {
 	}
 }
 
-type categoryRepoMock struct {
+type categoryRepoMock struct {}
 
-}
-
-func (categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
+func (c categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
 	return "", nil
 }
-func (categoryRepoMock) FindAll() ([]repository.CategoryEntity, error) {
+func (c categoryRepoMock) FindAll() ([]repository.CategoryEntity, error) {
 	return nil, nil
 }
 
-func (categoryRepoMock) Delete(id repository.CategoryId) error {
+func (c categoryRepoMock) Delete(id repository.CategoryId) error {
 	return nil
 }
