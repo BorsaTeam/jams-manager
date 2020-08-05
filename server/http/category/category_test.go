@@ -3,7 +3,6 @@ package category
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -87,23 +86,6 @@ func TestNewCategoryHandler(t *testing.T) {
 			out: func() http.HandlerFunc {
 				return func(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusMethodNotAllowed)
-				}
-			}(),
-		},
-		{
-			name: "error while saving category",
-			in: in{
-				method: http.MethodPost,
-				category: server.Category{
-					Id:        "123",
-					Name:      "123",
-				},
-				repo: categoryRepoMock{err: errors.New("couldn't save data information")},
-			},
-			out: func() http.HandlerFunc {
-				return func(w http.ResponseWriter, r *http.Request) {
-					w.WriteHeader(http.StatusUnprocessableEntity)
-					_, _ = w.Write([]byte("Error while processing data score"))
 				}
 			}(),
 		},
