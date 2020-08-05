@@ -136,11 +136,14 @@ workflows:
           filters:
             <<: *FILTERS_CHECK
       - unit_test:
+          name: unit-test
           filters:
             <<: *FILTERS_CHECK
+            requires:
+              - lint
       - build:
+          name: build-code
           filters:
             <<: *FILTERS_CHECK
           requires:
-            - unit_test
-            - lint
+            - unit-test

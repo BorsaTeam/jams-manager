@@ -3,6 +3,7 @@ package category
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -89,6 +90,23 @@ func TestNewCategoryHandler(t *testing.T) {
 				}
 			}(),
 		},
+		{
+			name: "error while saving category",
+			in: in{
+				method: http.MethodPost,
+				category: server.Category{
+					Id:        "123",
+					Name:      "123",
+				},
+				repo: categoryRepoMock{err: errors.New("couldn't save data information")},
+			},
+			out: func() http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusUnprocessableEntity)
+					_, _ = w.Write([]byte("Error while processing data score"))
+				}
+			}(),
+		},
 	}
 
 	for _, tt := range tests {
@@ -115,16 +133,17 @@ func TestNewCategoryHandler(t *testing.T) {
 }
 
 type categoryRepoMock struct {
-
+	err error
+	id  string
 }
 
-func (categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
-	return "", nil
+func (c categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {
+	return repository.CategoryId(c.id), nil
 }
-func (categoryRepoMock) FindAll() ([]repository.CategoryEntity, error) {
+func (c categoryRepoMock) FindAll() ([]repository.CategoryEntity, error) {
 	return nil, nil
 }
 
-func (categoryRepoMock) Delete(id repository.CategoryId) error {
+func (c categoryRepoMock) Delete(id repository.CategoryId) error {
 	return nil
 }
