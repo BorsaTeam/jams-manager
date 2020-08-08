@@ -32,7 +32,7 @@ func (m Manager) Handle() http.HandlerFunc {
 		case http.MethodPost:
 			m.processPost(w, r)
 		case http.MethodDelete:
-			processDelete(r)
+			m.processDelete(r)
 		case http.MethodPut:
 			processPut(w, r)
 		default:
@@ -163,13 +163,11 @@ func id(path string) string {
 	return ""
 }
 
-func processDelete(r *http.Request) {
+func (m Manager) processDelete(r *http.Request) {
 	id := id(r.URL.Path)
 
-	for i := range riders {
-		if riders[i].Id == id {
-			riders = append(riders[:i], riders[i+1:]...)
-			break
-		}
+	err := m.riderRepository.Delete(id)
+	if err != nil {
+		log.Println(err)
 	}
 }

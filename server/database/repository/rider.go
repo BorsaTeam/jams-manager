@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 type Rider interface {
 	Save(rider RiderEntity) (string, error)
 	FindOne(id string) (RiderEntity, error)
+	Delete(id string) error
 }
 
 type RiderEntity struct {
@@ -37,7 +39,7 @@ func NewRiderRepository(d database.DbConnection) RiderRepo {
 
 func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 
-	statement := `INSERT INTO public.RIDERS
+	statement := `INSERT INTO  jams.public.RIDERS
 				  (rider_id, name, age, gender, city, cpf, paid_subscription, sponsors, category_id, created, updated)
 				  VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);`
 
@@ -68,8 +70,9 @@ func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 
 	return id.String(), nil
 }
+
 func (r RiderRepo) FindOne(id string) (RiderEntity, error) {
-	statement := `SELECT * FROM RIDERS WHERE RIDER_ID=$1`
+	statement := `SELECT * FROM jams.public.riders WHERE RIDER_ID=$1`
 	db := r.database.ConnectHandle()
 	defer db.Close()
 
@@ -92,4 +95,18 @@ func (r RiderRepo) FindOne(id string) (RiderEntity, error) {
 		return RiderEntity{}, err
 	}
 	return re, nil
+}
+
+func (r RiderRepo) Delete(id string) error {
+	statement := `DELETE FROM jams.public.riders WHERE RIDER_ID=$1`
+	db := r.database.ConnectHandle()
+	defer db.Close()
+
+	_, err := db.Exec(statement, id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
 }
