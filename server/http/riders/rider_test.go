@@ -84,6 +84,10 @@ func (r repositoryMock) Save(rider repository.RiderEntity) (string, error) {
 	return r.riderId, r.error
 }
 
+func(r repositoryMock) Update (rider repository.RiderEntity) error {
+	return nil
+}
+
 func (r repositoryMock) Delete(id string) (error) {
 	return nil
 }
