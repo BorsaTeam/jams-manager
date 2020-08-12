@@ -19,7 +19,7 @@ type RiderEntity struct {
 	Age              int        `json:"age"`
 	Gender           string     `json:"gender"`
 	City             string     `json:"city"`
-	Cpf              string     `json:"cpf"`
+	Email            string     `json:"email"`
 	PaidSubscription bool       `json:"paidSubscription"`
 	Sponsors         string     `json:"sponsors"`
 	CategoryId       string     `json:"categoryId"`
@@ -56,7 +56,7 @@ func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 		rider.Age,
 		rider.Gender,
 		rider.City,
-		rider.Cpf,
+		rider.Email,
 		rider.PaidSubscription,
 		rider.Sponsors,
 		rider.CategoryId,
@@ -82,7 +82,7 @@ func (r RiderRepo) FindOne(id string) (RiderEntity, error) {
 		&re.Age,
 		&re.Gender,
 		&re.City,
-		&re.Cpf,
+		&re.Email,
 		&re.PaidSubscription,
 		&re.Sponsors,
 		&re.CategoryId,

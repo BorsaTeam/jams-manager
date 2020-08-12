@@ -28,7 +28,7 @@ type (
 		Age              int      `json:"age"`
 		Gender           string   `json:"gender"`
 		City             string   `json:"city"`
-		Cpf              string   `json:"cpf"`
+		Email            string   `json:"email"`
 		PaidSubscription bool     `json:"paidSubscription"`
 		Sponsors         []string `json:"sponsors"`
 		CategoryId       string   `json:"categoryId"`
