@@ -79,7 +79,7 @@ jobs:
       - run:
           name: lint
           command: |
-            /go/bin/golangci-lint run --no-config --issues-exit-code=1 --deadline=10m -v
+            /go/bin/golangci-lint run --no-config --issues-exit-code=1 --deadline=30m -v
 
   build:
     executor: jams-executor
@@ -136,11 +136,14 @@ workflows:
           filters:
             <<: *FILTERS_CHECK
       - unit_test:
-          filters:
-            <<: *FILTERS_CHECK
-      - build:
+          name: unit-test
           filters:
             <<: *FILTERS_CHECK
           requires:
-            - unit_test
             - lint
+      - build:
+          name: build-code
+          filters:
+            <<: *FILTERS_CHECK
+          requires:
+            - unit-test

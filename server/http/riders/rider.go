@@ -32,9 +32,9 @@ func (m Manager) Handle() http.HandlerFunc {
 		case http.MethodPost:
 			m.processPost(w, r)
 		case http.MethodDelete:
-			processDelete(r)
+			m.processDelete(r)
 		case http.MethodPut:
-			processPut(w, r)
+			m.processPut(w, r)
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		}
@@ -137,7 +137,7 @@ func (m Manager) createRider(r server.Rider) (string, error) {
 	return riderId, nil
 }
 
-func processPut(w http.ResponseWriter, r *http.Request) {
+func (m Manager) processPut(w http.ResponseWriter, r *http.Request) {
 	rider := server.Rider{}
 
 	defer r.Body.Close()
@@ -148,10 +148,36 @@ func processPut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := id(r.URL.Path)
-	for i := range riders {
-		if riders[i].Id == id {
-			riders[i] = rider
-		}
+	if id == "" {
+		_, _ = w.Write([]byte("No rider id identified"))
+	}
+
+	re := repository.RiderEntity{
+		Id:               id,
+		Name:             rider.Name,
+		Age:              rider.Age,
+		Gender:           rider.Gender,
+		City:             rider.City,
+		Email:            rider.Email,
+		PaidSubscription: rider.PaidSubscription,
+		Sponsors:         strings.Join(rider.Sponsors, ","),
+		CategoryId:       rider.CategoryId,
+		UpdateAt:         time.Now(),
+	}
+
+	err = m.riderRepository.Update(re)
+	if err != nil {
+		log.Println(err)
+	}
+
+}
+
+func (m Manager) processDelete(r *http.Request) {
+	id := id(r.URL.Path)
+
+	err := m.riderRepository.Delete(id)
+	if err != nil {
+		log.Println(err)
 	}
 }
 
@@ -161,15 +187,4 @@ func id(path string) string {
 		return p[2]
 	}
 	return ""
-}
-
-func processDelete(r *http.Request) {
-	id := id(r.URL.Path)
-
-	for i := range riders {
-		if riders[i].Id == id {
-			riders = append(riders[:i], riders[i+1:]...)
-			break
-		}
-	}
 }
