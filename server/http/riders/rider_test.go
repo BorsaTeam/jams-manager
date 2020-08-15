@@ -31,7 +31,7 @@ func TestNewRiderHandler(t *testing.T) {
 					Age:              27,
 					Gender:           "Male",
 					City:             "Joinville",
-					Cpf:              "0933452212",
+					Email:              "0933452212",
 					PaidSubscription: false,
 					Sponsors:         []string{"EcoFun", "Velho Barreiro", "Honda"},
 					CategoryId:       "Pro",
