@@ -9,15 +9,20 @@ BIN=bin
 BINARY_NAME=jams-manager
 MAIN_PATH=./server/cmd/server/main.go
 
-build:
+build-linux:
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux $(GO_BUILD) -a -installsuffix cgo -ldflags "-X main.version=$(RELEASE)" -o ./$(BINARY_NAME) $(MAIN_PATH)
 
+build-mac:
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin $(GO_BUILD) -a -installsuffix cgo -ldflags "-X main.version=$(RELEASE)" -o ./$(BINARY_NAME) $(MAIN_PATH)
+
 pack:
-	docker build -t gcr.io/jams-manager/jams-manager_api:$(RELEASE) .
+	docker build -t jams-manager/jams-manager_api:$(RELEASE) .
 
 publish:
-	$(shell echo ${GCP_CREDENTIAL} | docker login -u _json_key --password-stdin https://gcr.io > /dev/null)
-	docker push gcr.io/jams-manager/jams-manager_api:$(RELEASE)
+	heroku container:push jams-manager/jams-manager_api:$(RELEASE)
+
+deploy:
+	heroku container:release jams-manager/jams-manager_api:$(RELEASE)
 
 release:
 	curl --location --request POST 'https://api.github.com/repos/BorsaTeam/jams-manager/releases' --header 'Accept: application/vnd.github.inertia-preview+json' --header 'Authorization: token $(GITHUB_TOKEN)' --header 'Content-Type: application/json' --data-raw '{"tag_name": "$(RELEASE_VERSION)","target_commitish": "release-$(RELEASE_VERSION)","name": "Release $(RELEASE_VERSION)"}'

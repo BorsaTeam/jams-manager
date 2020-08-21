@@ -103,6 +103,34 @@ jobs:
     executor: jams-test-executor
     environment:
       <<: *ENVIRONMENT
+
+    parameters:
+      api-key:
+        default: HEROKU_API_KEY
+        description: The name of the environment variable containing your Heroku API Key.
+        type: env_var_name
+      app-name:
+        default: HEROKU_APP_NAME
+        description: >-
+          The name of your Heroku App. For backwards compatibility the literal value
+          `$HEROKU_APP_NAME` is the default, so you can easily use this command by
+          setting an environment variable called HEROKU_APP_NAME
+        type: env_var_name
+      no_output_timeout:
+        default: 10m
+        description: >-
+          Allows you to specify the no_output_timeout for the `git push` to heroku.
+          Defaults to 10m.
+        type: string
+      process-types:
+        default: ''
+        description: Process types.
+        type: string
+      recursive:
+        default: false
+        description: Push all Dockerfiles in the directory to Heroku.
+        type: boolean
+
     steps:
       - checkout
       - attach_workspace:
@@ -117,6 +145,11 @@ jobs:
           command: |
             . ./helper-ci.sh
             make publish
+      - run:
+          name: Deploy docker image
+          command: |
+            . ./helper-ci.sh
+            make deploy
 
   release:
     environment:
@@ -129,6 +162,10 @@ jobs:
           command: |
             . ./helper-ci.sh
             make release
+
+orbs:
+  heroku: circleci/heroku@1.2.2
+
 workflows:
   build-for-requests:
     jobs:
