@@ -19,7 +19,7 @@ pack:
 	docker build -t jams-manager/jams-manager_api:$(RELEASE) .
 
 publish:
-	heroku container:push jams-manager/jams-manager_api:$(RELEASE)
+	heroku container:push jams-manager/jams-manager_api:$(RELEASE) --app $(HEROKU_APP_NAME)
 
 deploy:
 	heroku container:release jams-manager/jams-manager_api:$(RELEASE)
