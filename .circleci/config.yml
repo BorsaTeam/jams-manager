@@ -99,7 +99,7 @@ jobs:
       - store_artifacts:
           path: *TEST_RESULTS_DIR
 
-  docker:
+  delivery:
     executor: jams-test-executor
     environment:
       <<: *ENVIRONMENT
@@ -181,3 +181,28 @@ workflows:
           requires:
             - unit_test
             - lint
+
+  release:
+    jobs:
+      - lint:
+          filters:
+            <<: *FILTERS_RELEASE
+      - unit_test:
+          filters:
+            <<: *FILTERS_RELEASE
+      - build:
+          filters:
+            <<: *FILTERS_RELEASE
+          requires:
+            - unit_test
+            - lint
+      - delivery:
+          filters:
+            <<: *FILTERS_RELEASE
+          requires:
+            - build
+      - release:
+          filters:
+            <<: *FILTERS_RELEASE
+          requires:
+            - delivery
