@@ -1,4 +1,4 @@
-RELEASE = $(RELEASE_VERSION)
+RELEASE = 0.0.1
 
 # Go parameters
 GO_CMD=go
