@@ -17,7 +17,6 @@ references:
     branches:
       only:
         - master
-        - /^release-.*/
         - /^pull\/.*$/
         - /^feature.*/
         - /^fix.*/
