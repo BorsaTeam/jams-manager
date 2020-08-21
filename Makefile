@@ -23,7 +23,7 @@ publish:
 	heroku container:push jams-manager/jams-manager_api:$(RELEASE) --app $(HEROKU_APP_NAME)
 
 deploy:
-	heroku container:release jams-manager/jams-manager_api:$(RELEASE)
+	heroku container:release jams-manager/jams-manager_api:$(RELEASE) --app $(HEROKU_APP_NAME)
 
 release:
 	curl --location --request POST 'https://api.github.com/repos/BorsaTeam/jams-manager/releases' --header 'Accept: application/vnd.github.inertia-preview+json' --header 'Authorization: token $(GITHUB_TOKEN)' --header 'Content-Type: application/json' --data-raw '{"tag_name": "$(RELEASE_VERSION)","target_commitish": "release-$(RELEASE_VERSION)","name": "Release $(RELEASE_VERSION)"}'
