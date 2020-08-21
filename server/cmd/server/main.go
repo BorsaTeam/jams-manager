@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/BorsaTeam/jams-manager/server/database"
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
@@ -31,6 +33,13 @@ func main() {
 
 	http.Handle("/scores", scoreHandler.Handle())
 
-	log.Println("Running jams-manager at port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+
+	log.Printf("Running jams-manager at port %s", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
