@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Running build
           command: |
-            make build
+            make build-linux
       - persist_to_workspace:
           root: .
           paths:
