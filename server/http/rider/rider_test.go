@@ -53,7 +53,7 @@ func TestNewRiderHandler(t *testing.T) {
 
 			body, _ := json.Marshal(tt.fields.rider)
 
-			r, _ := http.NewRequest(tt.fields.method, "/riders", bytes.NewReader(body))
+			r, _ := http.NewRequest(tt.fields.method, "/rider", bytes.NewReader(body))
 
 			w := httptest.NewRecorder()
 

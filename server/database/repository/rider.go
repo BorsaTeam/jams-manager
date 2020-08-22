@@ -40,6 +40,14 @@ func NewRiderRepository(d database.DbConnection) RiderRepo {
 
 func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 
+	db := r.database.ConnectHandle()
+	defer db.Close()
+
+	id, err := uuid.NewRandom()
+	if err != nil {
+		return "", err
+	}
+
 	statement := `INSERT INTO jams.public.RIDERS
 				  (rider_id,
 				   name, 
@@ -53,14 +61,6 @@ func (r RiderRepo) Save(rider RiderEntity) (string, error) {
 				   created, 
 				   updated)
 				  VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);`
-
-	db := r.database.ConnectHandle()
-	defer db.Close()
-
-	id, err := uuid.NewRandom()
-	if err != nil {
-		return "", err
-	}
 
 	_, err = db.Exec(statement,
 		id,
@@ -84,10 +84,10 @@ func (r RiderRepo) FindOne(id string) (RiderEntity, error) {
 	statement := `SELECT * FROM jams.public.riders WHERE RIDER_ID=$1`
 	db := r.database.ConnectHandle()
 	defer db.Close()
-
 	re := RiderEntity{}
 
 	row := db.QueryRow(statement, id)
+
 	if err := row.Scan(
 		&re.Id,
 		&re.Name,

@@ -7,7 +7,7 @@ import (
 	"github.com/BorsaTeam/jams-manager/server/database"
 	"github.com/BorsaTeam/jams-manager/server/database/repository"
 	"github.com/BorsaTeam/jams-manager/server/http/category"
-	"github.com/BorsaTeam/jams-manager/server/http/riders"
+	"github.com/BorsaTeam/jams-manager/server/http/rider"
 	"github.com/BorsaTeam/jams-manager/server/http/score"
 )
 

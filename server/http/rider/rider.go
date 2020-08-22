@@ -50,18 +50,20 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 			_ = json.NewEncoder(w).Encode(errors.Unknown)
 			return
 		}
+
 		if rider.Id == "" {
 			w.WriteHeader(http.StatusNotFound)
+			log.Printf("Rider id %s not found on database\n")
 			return
 		}
 
 		w.Header().Add("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(rider)
 		return
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(findAll())
 	}
-
-	w.Header().Add("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(findAll())
 }
 
 func (m Manager) findOne(id string) (server.Rider, error) {
@@ -87,6 +89,7 @@ func (m Manager) findOne(id string) (server.Rider, error) {
 	return rider, nil
 }
 
+// TODO this should return from database
 func findAll() server.Riders {
 	return riders
 }
@@ -116,7 +119,7 @@ func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
 func (m Manager) createRider(r server.Rider) (string, error) {
 	sponsorsString := strings.Join(r.Sponsors, ",")
 
-	riderEntity := repository.RiderEntity{
+	re := repository.RiderEntity{
 		Id:               r.Id,
 		Name:             r.Name,
 		Age:              r.Age,
@@ -129,7 +132,7 @@ func (m Manager) createRider(r server.Rider) (string, error) {
 		CreateAt:         time.Now(),
 	}
 
-	riderId, err := m.riderRepository.Save(riderEntity)
+	riderId, err := m.riderRepository.Save(re)
 	if err != nil {
 		return "", err
 	}
