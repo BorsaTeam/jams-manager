@@ -53,7 +53,7 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 
 		if rider.Id == "" {
 			w.WriteHeader(http.StatusNotFound)
-			log.Printf("Rider id %s not found on database\n")
+			log.Printf("Rider id not found on database\n")
 			return
 		}
 
