@@ -56,7 +56,11 @@ jobs:
           name: Running test
           command: |
             mkdir -p $TEST_RESULTS_DIR
-            docker-compose -f docker-compose-ci.yml run server
+            set -x
+            docker-compose up -d
+            docker run --network container:contacts \
+              appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://localhost:8080/contacts/test
+
 
       - store_test_results:
           path: *TEST_RESULTS_DIR
