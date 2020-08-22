@@ -58,10 +58,6 @@ jobs:
             mkdir -p $TEST_RESULTS_DIR
             set -x
             docker-compose up -d
-            docker run --network container:contacts \
-              appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://localhost:8080/contacts/test
-
-
       - store_test_results:
           path: *TEST_RESULTS_DIR
       - store_artifacts:
