@@ -58,6 +58,7 @@ jobs:
             mkdir -p $TEST_RESULTS_DIR
             set -x
             docker-compose up -d
+            docker-compose -f docker-compose-ci.yml run server
       - store_test_results:
           path: *TEST_RESULTS_DIR
       - store_artifacts:
