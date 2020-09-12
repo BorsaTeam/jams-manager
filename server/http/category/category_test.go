@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/BorsaTeam/jams-manager/server"
-	"github.com/BorsaTeam/jams-manager/server/database/repository"
+	"github.com/BorsaTeam/jams-manager/server/database/postgres/repository"
 )
 
 func TestNewCategoryHandler(t *testing.T) {
@@ -115,7 +115,6 @@ func TestNewCategoryHandler(t *testing.T) {
 }
 
 type categoryRepoMock struct {
-
 }
 
 func (categoryRepoMock) Save(category repository.CategoryEntity) (repository.CategoryId, error) {

@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/BorsaTeam/jams-manager/server"
-	"github.com/BorsaTeam/jams-manager/server/database/repository"
+	"github.com/BorsaTeam/jams-manager/server/database/postgres/repository"
 )
 
 func TestNewRiderHandler(t *testing.T) {
@@ -72,7 +72,7 @@ func TestNewRiderHandler(t *testing.T) {
 
 type repositoryMock struct {
 	riderId string
-	rider repository.RiderEntity
+	rider   repository.RiderEntity
 	error   error
 }
 

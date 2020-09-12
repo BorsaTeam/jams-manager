@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/BorsaTeam/jams-manager/server"
-	"github.com/BorsaTeam/jams-manager/server/database/repository"
+	"github.com/BorsaTeam/jams-manager/server/database/postgres/repository"
 )
 
 func TestHandle(t *testing.T) {

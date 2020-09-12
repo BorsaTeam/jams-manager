@@ -6,15 +6,18 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/BorsaTeam/jams-manager/server/database"
-	"github.com/BorsaTeam/jams-manager/server/database/repository"
+	"github.com/BorsaTeam/jams-manager/server/database/postgres"
+	"github.com/BorsaTeam/jams-manager/server/database/postgres/repository"
 	"github.com/BorsaTeam/jams-manager/server/http/category"
 	"github.com/BorsaTeam/jams-manager/server/http/riders"
 	"github.com/BorsaTeam/jams-manager/server/http/score"
 )
 
 func main() {
-	dbConnection := database.NewPgManager()
+	migration := postgres.NewMigration()
+	migration.Apply()
+
+	dbConnection := postgres.NewPgManager()
 	dbConnection.TestConnection()
 
 	riderRepository := repository.NewRiderRepository(dbConnection)
@@ -35,10 +38,9 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 		log.Printf("Defaulting to port %s", port)
 	}
-
 
 	log.Printf("Running jams-manager at port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))

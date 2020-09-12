@@ -1,4 +1,4 @@
-version: '2'
+version: '3.3'
 services:
   postgres:
     image: postgres:9.6
@@ -6,7 +6,6 @@ services:
       - "5432:5432"
     volumes:
       - /var/lib/postgresql/data
-      - ./resources/docker-init-db.sql:/docker-entrypoint-initdb.d/docker-init-db.sql
     environment:
       - POSTGRES_DB=jams
       - POSTGRES_USER=jams

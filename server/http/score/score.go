@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/BorsaTeam/jams-manager/server"
-	"github.com/BorsaTeam/jams-manager/server/database/repository"
+	"github.com/BorsaTeam/jams-manager/server/database/postgres/repository"
 )
 
 type Manager struct {
