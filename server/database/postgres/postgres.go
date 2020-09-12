@@ -1,4 +1,4 @@
-package database
+package postgres
 
 import (
 	"database/sql"
@@ -8,22 +8,25 @@ import (
 	"strconv"
 
 	_ "github.com/lib/pq"
+
+	"github.com/BorsaTeam/jams-manager/server/database"
 )
 
 const (
 	driveName         = "postgres"
-	dataSourcePattern = "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable"
+	dataSourcePattern = "host=%s port=%d user=%s password=%s dbname=%s sslmode=%s"
 )
 
 var (
-	host   = os.Getenv("DATABASE_HOST")
-	port   = os.Getenv("DATABASE_PORT")
-	dbname = os.Getenv("DATABASE_NAME")
+	host     = os.Getenv("DATABASE_HOST")
+	port     = os.Getenv("DATABASE_PORT")
+	dbname   = os.Getenv("DATABASE_NAME")
+	user     = os.Getenv("DATABASE_USER")
+	password = os.Getenv("DATABASE_PASSWORD")
+	sslMode  = os.Getenv("DATABASE_SSL_MODE")
 )
 
-type DbConnection interface {
-	ConnectHandle() *sql.DB
-}
+var _ database.DbConnection = PgManager{}
 
 type PgManager struct {
 }
@@ -51,11 +54,8 @@ func (p PgManager) TestConnection() {
 func (p PgManager) dataSource() string {
 	dbPort, err := strconv.Atoi(port)
 	if err != nil {
-		log.Panicln(err)
+		log.Fatal("Error: Invalid DATABASE_PORT value.")
 	}
 
-	user := os.Getenv("DATABASE_USER")
-	password := os.Getenv("DATABASE_PASSWORD")
-
-	return fmt.Sprintf(dataSourcePattern, host, dbPort, user, password, dbname)
+	return fmt.Sprintf(dataSourcePattern, host, dbPort, user, password, dbname, sslMode)
 }
