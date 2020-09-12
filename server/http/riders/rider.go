@@ -23,16 +23,14 @@ func NewHandler(rider repository.Rider) Manager {
 }
 
 func (m Manager) Handle() http.HandlerFunc {
-
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		switch r.Method {
 		case http.MethodGet:
 			m.processGet(w, r)
 		case http.MethodPost:
 			m.processPost(w, r)
 		case http.MethodDelete:
-			processDelete(r)
+			m.processDelete(w, r)
 		case http.MethodPut:
 			processPut(w, r)
 		default:
@@ -45,6 +43,7 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 	if id := id(r.URL.Path); id != "" {
 		rider, err := m.findOne(id)
 		if err != nil {
+			log.Println(err)
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			_ = json.NewEncoder(w).Encode(errors.Unknown)
@@ -65,7 +64,6 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m Manager) findOne(id string) (server.Rider, error) {
-
 	riderEntity, err := m.riderRepository.FindOne(id)
 	if err != nil {
 		return server.Rider{}, err
@@ -155,21 +153,31 @@ func processPut(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (m Manager) processDelete(w http.ResponseWriter, r *http.Request) {
+	id := id(r.URL.Path)
+	rider, err := m.findOne(id)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	if rider.Id == "" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err := m.riderRepository.Delete(id); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+}
+
 func id(path string) string {
 	p := strings.Split(path, "/")
-	if len(p) > 1 {
+	if len(p) == 3 {
 		return p[2]
 	}
 	return ""
-}
-
-func processDelete(r *http.Request) {
-	id := id(r.URL.Path)
-
-	for i := range riders {
-		if riders[i].Id == id {
-			riders = append(riders[:i], riders[i+1:]...)
-			break
-		}
-	}
 }

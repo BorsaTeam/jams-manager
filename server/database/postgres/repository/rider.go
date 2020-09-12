@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -8,9 +9,12 @@ import (
 	"github.com/BorsaTeam/jams-manager/server/database"
 )
 
+var _ Rider = RiderRepo{}
+
 type Rider interface {
 	Save(rider RiderEntity) (string, error)
 	FindOne(id string) (RiderEntity, error)
+	Delete(id string) error
 }
 
 type RiderEntity struct {
@@ -76,7 +80,7 @@ func (r RiderRepo) FindOne(id string) (RiderEntity, error) {
 	re := RiderEntity{}
 
 	row := db.QueryRow(statement, id)
-	if err := row.Scan(
+	err := row.Scan(
 		&re.Id,
 		&re.Name,
 		&re.Age,
@@ -88,8 +92,26 @@ func (r RiderRepo) FindOne(id string) (RiderEntity, error) {
 		&re.CategoryId,
 		&re.CreateAt,
 		&re.UpdateAt,
-	); err != nil {
+	)
+
+	if err == sql.ErrNoRows {
+		return RiderEntity{}, nil
+	}
+
+	if err != nil {
 		return RiderEntity{}, err
 	}
 	return re, nil
+}
+
+func (r RiderRepo) Delete(id string) error {
+	stmt := `DELETE FROM riders WHERE rider_id=$1`
+	db := r.database.ConnectHandle()
+	defer db.Close()
+
+	if _, err := db.Exec(stmt, id); err != nil {
+		return err
+	}
+
+	return nil
 }
