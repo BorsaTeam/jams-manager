@@ -243,3 +243,11 @@ func (r repositoryMock) Save(rider repository.RiderEntity) (string, error) {
 func (r repositoryMock) Delete(id string) error {
 	return r.deleteErr
 }
+
+func (repositoryMock) FindAll(page server.PageRequest) ([]repository.RiderEntity, error) {
+	return nil, nil
+}
+
+func (repositoryMock) Count() (int, error) {
+	return 0, nil
+}
