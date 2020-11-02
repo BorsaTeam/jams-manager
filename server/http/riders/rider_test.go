@@ -74,6 +74,32 @@ func TestNewRiderHandler(t *testing.T) {
 		{
 			name: "success find all",
 			fields: in{
+				method: http.MethodGet,
+				url:    "/riders?page=1&per_page=10",
+				rider:  server.Rider{},
+				repoMock: repositoryMock{
+					riders: []repository.RiderEntity{
+						{
+							Name:             "Paibic o cara do whip",
+							Age:              27,
+							Gender:           "Male",
+							City:             "Joinville",
+							Email:            "dogdacg@gmail.com",
+							PaidSubscription: false,
+							Sponsors:         `"EcoFun", "Velho Barreiro", "Honda"`,
+							CategoryId:       "Pro",
+						},
+					},
+				},
+			},
+			out: func() http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+				}
+			}(),
+		},
+		{
+			name: "find all error query params",
+			fields: in{
 				method:   http.MethodGet,
 				url:      "/riders",
 				rider:    server.Rider{},
@@ -81,6 +107,35 @@ func TestNewRiderHandler(t *testing.T) {
 			},
 			out: func() http.HandlerFunc {
 				return func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(400)
+				}
+			}(),
+		},
+		{
+			name: "find all error unknown",
+			fields: in{
+				method:   http.MethodGet,
+				url:      "/riders?page=1&per_page=10",
+				rider:    server.Rider{},
+				repoMock: repositoryMock{findAllErr: errors.New("find all error unknown")},
+			},
+			out: func() http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(422)
+				}
+			}(),
+		},
+		{
+			name: "find all count error",
+			fields: in{
+				method:   http.MethodGet,
+				url:      "/riders?page=1&per_page=10",
+				rider:    server.Rider{},
+				repoMock: repositoryMock{countErr: errors.New("find all count error")},
+			},
+			out: func() http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(422)
 				}
 			}(),
 		},
@@ -227,9 +282,13 @@ func TestNewRiderHandler(t *testing.T) {
 type repositoryMock struct {
 	riderId    string
 	rider      repository.RiderEntity
+	riders     []repository.RiderEntity
+	count      int
 	findOneErr error
 	saveErr    error
 	deleteErr  error
+	findAllErr error
+	countErr   error
 }
 
 func (r repositoryMock) FindOne(id string) (repository.RiderEntity, error) {
@@ -242,4 +301,12 @@ func (r repositoryMock) Save(rider repository.RiderEntity) (string, error) {
 
 func (r repositoryMock) Delete(id string) error {
 	return r.deleteErr
+}
+
+func (r repositoryMock) FindAll(page server.PageRequest) ([]repository.RiderEntity, error) {
+	return r.riders, r.findAllErr
+}
+
+func (r repositoryMock) Count() (int, error) {
+	return r.count, r.countErr
 }

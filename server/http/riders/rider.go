@@ -10,6 +10,7 @@ import (
 	"github.com/BorsaTeam/jams-manager/server"
 	"github.com/BorsaTeam/jams-manager/server/database/postgres/repository"
 	"github.com/BorsaTeam/jams-manager/server/error/errors"
+	"github.com/BorsaTeam/jams-manager/server/urls"
 )
 
 var riders = server.Riders{}
@@ -59,8 +60,66 @@ func (m Manager) processGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	page, err := queryParams(r)
+	if err != nil {
+		log.Println(err)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	riders, err := m.findAll(page)
+	if err != nil {
+		log.Println(err)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		_ = json.NewEncoder(w).Encode(errors.Unknown)
+		return
+	}
+
 	w.Header().Add("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(findAll())
+	_ = json.NewEncoder(w).Encode(riders)
+}
+
+func (m Manager) findAll(page server.PageRequest) (server.Pagination, error) {
+	ridersEntity, err := m.riderRepository.FindAll(page)
+	if err != nil {
+		return server.Pagination{}, err
+	}
+
+	riders := make(server.Riders, 0)
+	for _, r := range ridersEntity {
+		rider := server.Rider{
+			Id:               r.Id,
+			Name:             r.Name,
+			Age:              r.Age,
+			Gender:           r.Gender,
+			City:             r.City,
+			Email:            r.Email,
+			PaidSubscription: r.PaidSubscription,
+			Sponsors:         strings.Split(r.Sponsors, ","),
+			CategoryId:       r.CategoryId,
+		}
+		riders = append(riders, rider)
+	}
+
+	total, err := m.riderRepository.Count()
+	if err != nil {
+		return server.Pagination{}, err
+	}
+
+	res := server.Pagination{
+		Meta: server.Metadata{
+			Page:       page.Page,
+			PerPage:    page.PerPage,
+			PageCount:  len(riders),
+			TotalCount: total,
+		},
+		Results: riders,
+	}
+
+	return res, nil
 }
 
 func (m Manager) findOne(id string) (server.Rider, error) {
@@ -83,10 +142,6 @@ func (m Manager) findOne(id string) (server.Rider, error) {
 	}
 
 	return rider, nil
-}
-
-func findAll() server.Riders {
-	return riders
 }
 
 func (m Manager) processPost(w http.ResponseWriter, r *http.Request) {
@@ -180,4 +235,13 @@ func id(path string) string {
 		return p[2]
 	}
 	return ""
+}
+
+func queryParams(r *http.Request) (server.PageRequest, error) {
+	page, err := urls.Page(r)
+	if err != nil {
+		return server.PageRequest{}, err
+	}
+
+	return page, nil
 }

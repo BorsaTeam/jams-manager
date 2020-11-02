@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/BorsaTeam/jams-manager/server"
 	"github.com/BorsaTeam/jams-manager/server/database"
 )
 
@@ -15,6 +16,8 @@ type Rider interface {
 	Save(rider RiderEntity) (string, error)
 	FindOne(id string) (RiderEntity, error)
 	Delete(id string) error
+	FindAll(page server.PageRequest) ([]RiderEntity, error)
+	Count() (int, error)
 }
 
 type RiderEntity struct {
@@ -114,4 +117,59 @@ func (r RiderRepo) Delete(id string) error {
 	}
 
 	return nil
+}
+
+func (r RiderRepo) Count() (int, error) {
+	stmt := `SELECT COUNT(*) FROM riders`
+	db := r.database.ConnectHandle()
+	defer db.Close()
+
+	var result int
+
+	row := db.QueryRow(stmt)
+	if err := row.Scan(&result); err != nil {
+		return 0, err
+	}
+
+	return result, nil
+}
+
+func (r RiderRepo) FindAll(page server.PageRequest) ([]RiderEntity, error) {
+	stmt := `SELECT * FROM riders LIMIT $1 OFFSET $2`
+	db := r.database.ConnectHandle()
+	defer db.Close()
+
+	offset := (page.Page - 1) * page.PerPage
+	rows, err := db.Query(stmt, page.PerPage, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	riders := make([]RiderEntity, 0)
+	for rows.Next() {
+		re := RiderEntity{}
+		err := rows.Scan(
+			&re.Id,
+			&re.Name,
+			&re.Age,
+			&re.Gender,
+			&re.City,
+			&re.Email,
+			&re.PaidSubscription,
+			&re.Sponsors,
+			&re.CategoryId,
+			&re.CreateAt,
+			&re.UpdateAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		riders = append(riders, re)
+	}
+
+	return riders, nil
 }

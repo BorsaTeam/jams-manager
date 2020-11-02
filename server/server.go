@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -34,6 +35,18 @@ type (
 		CategoryId       string   `json:"categoryId"`
 	}
 	Riders []Rider
+
+	Metadata struct {
+		Page       int `json:"page"`
+		PerPage    int `json:"per_page"`
+		PageCount  int `json:"page_count"`
+		TotalCount int `json:"total_count"`
+	}
+
+	Pagination struct {
+		Meta    Metadata      `json:"_metadata"`
+		Results interface{} `json:"results"`
+	}
 )
 
 type CategoryHandler interface {
@@ -51,4 +64,13 @@ type ScoreHandler interface {
 type JamsError struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
+}
+
+func (j JamsError) Error() string {
+	return fmt.Sprintf("[%s] %s", j.Code, j.Message)
+}
+
+type PageRequest struct {
+	Page    int
+	PerPage int
 }
